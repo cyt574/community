@@ -20,6 +20,8 @@
 
 [thymeleaf](https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html)
 
+[Github OAuth](https://developer.github.com/apps/building-oauth-apps/authorizing-oauth-apps/)
+
 ## 工具
 
 [Git](https://git-scm.comg)
@@ -43,6 +45,7 @@ create table USER
 
 ```bash
 mvn flyway:migrate
+mvn -Dmybatis.generator.overwrite=true mybatis-generator:generate   
 ```
 
  

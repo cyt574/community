@@ -2,7 +2,11 @@
 ## 资料
 [Spring文档](https://spring.io/guides)
 
+[Spring MVC](https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html)
+
 [ES](https://elasticsearch.cn/)
+
+[JQuery.js](https://jquery.com/download/)
 
 [Bootstrap](https://v3.bootcss.com/)
 

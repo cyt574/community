@@ -2,21 +2,35 @@
     margin: 30px;
     background-color: white;
 }
+
 body {
     background-color: #efefef;
 }
+
+hr {
+    margin: 15px;
+}
+
 .btn-publish {
     float: right;
     margin-bottom: 15px;
     position: center;
 }
 
-.media-object{
+.media-object {
     width: 38px;
     height: 38px;
 }
 
-.text-desc{
+.media-object-avatar {
+    margin-top: 8px;
+}
+
+.media-body {
+    padding: 10px;
+}
+
+.text-desc {
     font-size: 12px;
     font-weight: normal;
     color: #999;
@@ -27,10 +41,48 @@ body {
 }
 
 .community-menu {
+    display: block;
     color: #999;
-    font-size: 12px;
+    font-size: 13px;
+    margin-bottom: 15px;
+}
+
+.question-title {
+    margin-top: 25px;
 }
 
 .jumbotron {
     margin: 50px;
+}
+
+.comment {
+    margin: 10px 0;
+}
+
+.btn-comment {
+    float: right;
+    margin: 15px 10px 15px 0px;
+}
+
+.span-comment {
+    margin-top: 0;
+}
+
+.menu {
+    color: #999;
+    font-size: 12px;
+}
+
+.menu .icon {
+    margin-right: 6px;
+    cursor: pointer;
+}
+.icon:hover {
+    color: #2aabd2;
+}
+
+.section-comment {
+    padding: 5px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
 }

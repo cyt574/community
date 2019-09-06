@@ -38,6 +38,10 @@
     set COMMENT_COUNT = COMMENT_COUNT + #{commentCount,jdbcType=INTEGER}
     where id = #{id}
   </update>
+  
+  <select id="selectRelatedTags" parameterType="com.yichen.community.model.Question" resultMap="BaseResultMap">
+    select * from question where id != #{id} and tag regexp #{tag}
+  </select>
 
 
 </mapper>

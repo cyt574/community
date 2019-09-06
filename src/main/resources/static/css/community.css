@@ -12,12 +12,51 @@ hr {
     margin: 15px;
 }
 
+h4 {
+    font-weight: bold;
+}
+
+.question-title {
+    margin-top: 25px;
+}
+
 .question-tags {
     margin-right: 15px;
 }
 
-.item-tags {
+.tab-item {
+    margin-top: 5px;
+}
+
+.tag-item-box {
     margin-right: 5px;
+}
+
+#tags-navigation{
+    margin-top: 15px;
+    display: none;
+}
+.show-logo {
+    width: 25px;
+    height: 25px;
+}
+
+.show-logo :hover {
+    width: 30px;
+    height: 30px;
+}
+
+.show-logo-head :hover{
+    text-decoration: none;
+    color: #c9302c;
+}
+
+.question-related {
+    line-height: 20px;
+    font-size: 12px;
+    margin-left: 0px;
+    list-style: none;
+    padding-left: 0;
 }
 
 .btn-publish {
@@ -56,9 +95,6 @@ hr {
     margin-bottom: 15px;
 }
 
-.question-title {
-    margin-top: 25px;
-}
 
 .jumbotron {
     margin: 50px;

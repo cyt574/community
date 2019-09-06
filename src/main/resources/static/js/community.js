@@ -62,7 +62,7 @@ function collapseComments(e) {
         e.classList.remove('active');
     } else {
         var subCommentContainer = $("#comment-item-" + id);
-        if (subCommentContainer.children().length == 0){
+        if (subCommentContainer.children().length == 0) {
             $.getJSON("/comment/" + id, function (data) {
                 console.log(data);
 
@@ -84,7 +84,7 @@ function collapseComments(e) {
                     });
                     var menuTimeElement = $("<div/>", {
                         "class": "menu"
-                    }).append($("<span/>",{
+                    }).append($("<span/>", {
                         "html": moment(comment.gmtCreate).format('YYYY-MM-DD HH:mm:ss'),
                         "class": "pull-right"
                     }));
@@ -125,4 +125,21 @@ function collapseComments(e) {
         e.classList.add('active');
 
     }
+}
+
+function selectTag(e) {
+    var value = e.getAttribute("data-tag");
+    var previous = $("#tag").val();
+    if(previous.indexOf(value) == -1) {
+        if(previous) {
+            $("#tag").val(previous + ',' + value);
+        } else {
+            $("#tag").val(value);
+        }
+    }
+}
+
+function showSelectTab() {
+    var tagsNavigation = $("#tags-navigation");
+    tagsNavigation.show();
 }

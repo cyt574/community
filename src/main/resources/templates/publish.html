@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/css/community.css">
     <script src="/js/jquery-3.4.1.min.js" type="application/javascript"></script>
     <script src="/js/bootstrap.min.js" type="application/javascript"></script>
+    <script src="/js/community.js" type="application/javascript"></script>
 </head>
 <body>
 <div th:insert="~{navigation :: nav}"></div>
@@ -32,8 +33,32 @@
                 <div class="form-group">
                     <label for="tag">添加标签:</label>
                     <input type="text" class="form-control" th:value="${tag}" id="tag" name="tag"
-                           placeholder="输入多个标签，以，隔开">
+                           placeholder="输入多个标签，以，隔开" onclick="showSelectTab()">
+                    <div id="tags-navigation">
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li role="presentation" th:each="selectCategory : ${tags}">
+                                <a th:href="${'#' + selectCategory.getCategoryName()}" aria-controls="home" role="tab"
+                                   data-toggle="tab" th:text="${selectCategory.getCategoryName()}">
+                                </a>
+                            </li>
+
+                        </ul>
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            <div role="tabpanel" class="tab-pane tab-item" th:each="selectCategory : ${tags}"
+                                 th:id="${selectCategory.getCategoryName()}">
+                                <span class="label label-info question-tags"
+                                      th:each="selectTag : ${selectCategory.getTags()}"
+                                      onclick="selectTag(this)" th:data-tag ="${selectTag}">
+                                    <span class="glyphicon glyphicon-tags tag-item-box"></span>
+                                    <span th:text="${selectTag}"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">

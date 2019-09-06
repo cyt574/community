@@ -10,13 +10,17 @@ import com.yichen.community.mapper.UserMapper;
 import com.yichen.community.model.Question;
 import com.yichen.community.model.QuestionExample;
 import com.yichen.community.model.User;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class QuestionService {
@@ -149,5 +153,25 @@ public class QuestionService {
         question.setId(id);
         question.setViewCount(1);
         questionExtMapper.increView(question);
+    }
+
+    public List<QuestionDTO> selectRelatedTags(QuestionDTO questionDTO) {
+        if(StringUtils.isBlank(questionDTO.getTag())) {
+            return new ArrayList<>();
+        }
+        String tags[] = StringUtils.split(questionDTO.getTag(),',');
+        String tagReg = Arrays.stream(tags).collect(Collectors.joining("|"));
+
+        Question question = new Question();
+        question.setTag(tagReg);
+        question.setId(questionDTO.getId());
+
+        List<Question> questions = questionExtMapper.selectRelatedTags(question);
+        List<QuestionDTO> questionDTOS = questions.stream().map(q -> {
+            QuestionDTO quest = new QuestionDTO();
+            BeanUtils.copyProperties(q, quest);
+            return quest;
+        }).collect(Collectors.toList());
+        return questionDTOS;
     }
 }

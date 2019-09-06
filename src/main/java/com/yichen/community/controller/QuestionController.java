@@ -1,8 +1,8 @@
 package com.yichen.community.controller;
 
-import com.yichen.community.dto.CommentCreateDTO;
 import com.yichen.community.dto.CommentDTO;
 import com.yichen.community.dto.QuestionDTO;
+import com.yichen.community.enums.CommentTypeEnum;
 import com.yichen.community.service.CommentService;
 import com.yichen.community.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ public class QuestionController {
                            Model model) {
         QuestionDTO questionDTO = questionService.getById(id);
 
-        List<CommentDTO> comments = commentService.listByQuestionId(id);
+        List<CommentDTO> comments = commentService.listByTargetId(id, CommentTypeEnum.QUESTION);
 
         questionService.increView(id);
         model.addAttribute("question", questionDTO);

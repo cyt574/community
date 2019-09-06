@@ -1,8 +1,15 @@
+/*
+* Post Reply
+* */
 function post() {
     var questionId = $("#question_id").val();
     var commentContent = $("#comment_content").val();
 
-    if(!commentContent) {
+    comment2target(questionId, 1, commentContent);
+}
+
+function comment2target(targetId, type, commentContent) {
+    if (!commentContent) {
         alert('不能回复空内容！！！');
         return;
     }
@@ -11,9 +18,9 @@ function post() {
         type: "POST",
         url: "/comment",
         data: JSON.stringify({
-            "parentId": questionId,
+            "parentId": targetId,
             "content": commentContent,
-            "type": 1
+            "type": type
         }),
         success: function (resp) {
             if (resp.code == 200) {
@@ -32,4 +39,90 @@ function post() {
         dataType: "json",
         contentType: "application/json"
     })
+}
+
+function comment(e) {
+    var commentId = e.getAttribute("data-id")
+    var commentContent = $('#input-' + commentId).val();
+    comment2target(commentId, 2, commentContent);
+}
+
+/*
+*Expand Secondary Reply
+* */
+
+function collapseComments(e) {
+    var id = e.getAttribute("data-id");
+    var collapse = e.getAttribute("data-collapse");
+    var comments = $("#comment-" + id);
+    if (collapse) {
+        //Collapse
+        comments.removeClass('in');
+        e.removeAttribute("data-collapse");
+        e.classList.remove('active');
+    } else {
+        var subCommentContainer = $("#comment-item-" + id);
+        if (subCommentContainer.children().length == 0){
+            $.getJSON("/comment/" + id, function (data) {
+                console.log(data);
+
+                $.each(data.data, function (index, comment) {
+                    var mediaAvatarLinkElement = $("<a/>", {
+                        "href": "#"
+                    });
+                    var mediaLeftElement = $("<div/>", {
+                        "class": "media-left"
+                    });
+                    mediaAvatarLinkElement.append($("<img/>", {
+                        "class": "media-object img-rounded media-object-avatar",
+                        "src": comment.user.avatarUrl
+                    }));
+                    mediaLeftElement.append(mediaAvatarLinkElement);
+
+                    var mediaContentElement = $("<div/>", {
+                        "html": comment.content
+                    });
+                    var menuTimeElement = $("<div/>", {
+                        "class": "menu"
+                    }).append($("<span/>",{
+                        "html": moment(comment.gmtCreate).format('YYYY-MM-DD HH:mm:ss'),
+                        "class": "pull-right"
+                    }));
+                    var mediaHeadingElement = $("<h5/>", {
+                        "class": "media-heading"
+                    });
+
+                    mediaHeadingElement.append($("<a/>", {
+                        "html": comment.user.name
+                    }));
+
+                    var mediaBodyElement = $("<div/>", {
+                        "class": "media-body"
+                    });
+                    mediaBodyElement.append(mediaHeadingElement, mediaContentElement, menuTimeElement);
+
+
+                    var mediaElement = $("<div/>", {
+                        "class": "media"
+                    });
+                    mediaElement.append(mediaLeftElement, mediaBodyElement);
+
+
+                    var commentElement = $("<div/>", {
+                        "class": "col-lg-12 col-md-12 col-sm-12 col-xs-12 secondary-comment-item"
+                    });
+                    commentElement.append(mediaElement)
+
+                    subCommentContainer.append(commentElement);
+                });
+
+            });
+        }
+
+        //Expand
+        comments.addClass('in');
+        e.setAttribute("data-collapse", "in");
+        e.classList.add('active');
+
+    }
 }

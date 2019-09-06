@@ -1,7 +1,9 @@
 package com.yichen.community.controller;
 
 import com.yichen.community.dto.CommentCreateDTO;
+import com.yichen.community.dto.CommentDTO;
 import com.yichen.community.dto.ResultDTO;
+import com.yichen.community.enums.CommentTypeEnum;
 import com.yichen.community.exception.CustomizeErrorCode;
 import com.yichen.community.model.Comment;
 import com.yichen.community.model.User;
@@ -9,12 +11,10 @@ import com.yichen.community.service.CommentService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Controller
 public class CommentController {
@@ -43,7 +43,15 @@ public class CommentController {
         comment.setGmtModified(comment.getGmtCreate());
         comment.setCommentator(1L);
         comment.setLikeCount(0L);
+        comment.setCommentCount(0);
         commentService.insert(comment);
         return ResultDTO.okOf();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/comment/{id}", method = RequestMethod.GET)
+    public ResultDTO comments (@PathVariable(value = "id") Long id){
+        List<CommentDTO> commentDTOS = commentService.listByTargetId(id, CommentTypeEnum.COMMENT);
+        return ResultDTO.okOf(commentDTOS);
     }
 }

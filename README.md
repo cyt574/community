@@ -1,4 +1,21 @@
 ## 以辰社区
+
+## 部署
+- Git
+- JDK
+- Maven
+- MySQL
+
+## 部署
+- yum update
+- yum install git
+- mkdir App; cd App
+- git co https://github.com/cyt574/community.git
+- yum install maven;mvn -v
+- mvn clean compile package
+- java -jar -Dspring.profiles.active=prod target/community-0.0.1-SNAPSHOT.jar
+
+
 ## 资料
 [Spring文档](https://spring.io/docs/reference)
 

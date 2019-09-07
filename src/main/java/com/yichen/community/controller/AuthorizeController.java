@@ -6,6 +6,7 @@ import com.yichen.community.mapper.UserMapper;
 import com.yichen.community.model.User;
 import com.yichen.community.provider.GithubProvider;
 import com.yichen.community.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;

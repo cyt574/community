@@ -8,6 +8,7 @@ import com.yichen.community.model.Question;
 import com.yichen.community.model.User;
 import com.yichen.community.service.NotificationService;
 import com.yichen.community.service.QuestionService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
+@Slf4j
 public class IndexController {
 
     @Autowired
@@ -40,6 +42,7 @@ public class IndexController {
         PaginationDTO paginationDTO = questionService.list(search, page, size);
         model.addAttribute("pagination", paginationDTO);
         model.addAttribute("search", search);
+        log.info("that's good");
         return "index";
     }
 }

@@ -5,9 +5,11 @@ import com.yichen.community.dto.CommentDTO;
 import com.yichen.community.dto.ResultDTO;
 import com.yichen.community.enums.CommentTypeEnum;
 import com.yichen.community.exception.CustomizeErrorCode;
+import com.yichen.community.mapper.NotificationMapper;
 import com.yichen.community.model.Comment;
 import com.yichen.community.model.User;
 import com.yichen.community.service.CommentService;
+import com.yichen.community.service.NotificationService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,6 +23,9 @@ public class CommentController {
 
     @Autowired
     CommentService commentService;
+
+    @Autowired
+    NotificationService notificationService;
 
     @ResponseBody
     @RequestMapping(value = "/comment", method = RequestMethod.POST)
@@ -41,10 +46,10 @@ public class CommentController {
         comment.setType(commentCreateDTO.getType());
         comment.setGmtCreate(System.currentTimeMillis());
         comment.setGmtModified(comment.getGmtCreate());
-        comment.setCommentator(1L);
+        comment.setCommentator(user.getId());
         comment.setLikeCount(0L);
         comment.setCommentCount(0);
-        commentService.insert(comment);
+        commentService.insert(comment, user);
         return ResultDTO.okOf();
     }
 

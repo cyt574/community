@@ -43,5 +43,24 @@
     select * from question where id != #{id} and tag regexp #{tag}
   </select>
 
+  <select id="countBySearch" parameterType="com.yichen.community.dto.QuestionQueryDTO" resultType="java.lang.Integer">
+    select count(*) from question
+    <where>
+      <if test="search != null">
+        and title regexp #{search} or tag regexp #{search}
+      </if>
+    </where>
+  </select>
+
+  <select id="selectBySearch" parameterType="com.yichen.community.dto.QuestionQueryDTO" resultMap="BaseResultMap">
+    select * from question
+    <where>
+      <if test="search != null">
+        and title regexp #{search} or tag regexp #{search}
+      </if>
+    </where>
+    order by gmt_create desc
+    limit #{offset}, #{size}
+  </select>
 
 </mapper>

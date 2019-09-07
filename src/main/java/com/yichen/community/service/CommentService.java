@@ -2,6 +2,8 @@ package com.yichen.community.service;
 
 import com.yichen.community.dto.CommentDTO;
 import com.yichen.community.enums.CommentTypeEnum;
+import com.yichen.community.enums.NotificationStatusEnum;
+import com.yichen.community.enums.NotificationTypeEnum;
 import com.yichen.community.exception.CustomizeErrorCode;
 import com.yichen.community.exception.CustomizeException;
 import com.yichen.community.mapper.*;
@@ -32,9 +34,12 @@ public class CommentService {
     @Autowired
     UserMapper userMapper;
 
+    @Autowired
+    NotificationMapper notificationMapper;
+
 
     @Transactional
-    public void insert(Comment comment) {
+    public void insert(Comment comment, User commentator) {
         if (comment.getParentId() == null || comment.getParentId() == 0) {
             throw new CustomizeException(CustomizeErrorCode.TARGET_PARAM_NOT_FOUND);
         }
@@ -56,6 +61,15 @@ public class CommentService {
             parentComment.setId(comment.getParentId());
             parentComment.setCommentCount(1);
             commentExtMapper.increCommentCount(parentComment);
+
+
+            //Notification
+            Question dbQuestion = questionMapper.selectByPrimaryKey(dbComment.getParentId());
+            if (dbQuestion == null) {
+                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+            }
+
+            createNotify(comment, dbComment.getCommentator(), commentator.getName(), dbQuestion.getTitle(), NotificationTypeEnum.REPLY_COMMENT.getType(), dbQuestion.getId());
         } else {
             Question dbQuestion = questionMapper.selectByPrimaryKey(comment.getParentId());
             if (dbQuestion == null) {
@@ -67,7 +81,27 @@ public class CommentService {
             //Add question view time
             dbQuestion.setCommentCount(1);
             questionExtMapper.increCommentCount(dbQuestion);
+
+            //Notification
+            createNotify(comment, dbQuestion.getCreator(), commentator.getName(), dbQuestion.getTitle(), NotificationTypeEnum.REPLY_QUESTION.getType(), dbQuestion.getId());
         }
+    }
+
+    private void createNotify(Comment comment, Long receiver, String notifierName, String outerTitle, Integer type, Long outerId) {
+        if(receiver == comment.getCommentator()) {
+            return;
+        }
+
+        Notification notification = new Notification();
+        notification.setGmtCreate(System.currentTimeMillis());
+        notification.setType(type);
+        notification.setOuterid(outerId);
+        notification.setNotifier(comment.getCommentator());
+        notification.setReceiver(receiver);
+        notification.setState(NotificationStatusEnum.UNREAD.getStatus());
+        notification.setOuterTitle(outerTitle);
+        notification.setNotifierName(notifierName);
+        notificationMapper.insert(notification);
     }
 
     public List<CommentDTO> listByTargetId(Long id, CommentTypeEnum type) {

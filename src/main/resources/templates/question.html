@@ -6,10 +6,14 @@
     <link rel="stylesheet" href="/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="/css/community.css">
+    <link rel="stylesheet" href="/css/editormd.preview.min.css" />
     <script src="/js/jquery-3.4.1.min.js" type="application/javascript"></script>
     <script src="/js/bootstrap.min.js" type="application/javascript"></script>
     <script src="/js/community.js" type="application/javascript"></script>
     <script src="/js/moment.min.js"></script>
+    <script src="/js/editormd.min.js" type="application/javascript"></script>
+    <script src="/js/lib/marked.min.js" type="application/javascript"></script>
+    <script src="/js/lib/prettify.min.js" type="application/javascript"></script>
 </head>
 <body>
 <div th:insert="~{navigation :: nav}"></div>
@@ -26,7 +30,14 @@
                 浏览次数：<span th:text="${question.viewCount}"></span>
                 </span>
                 <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:text="${question.description}"></div>
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="markdown-view">
+                    <textarea style="display:none;" th:text="${question.description}" ></textarea>
+                </div>
+                <script type="text/javascript">
+                    $(function() {
+                        editormd.markdownToHTML("markdown-view", {});
+                    });
+                </script>
                 <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <span class="label label-info question-tags" th:each="tag : ${question.tag.split(',')}">
@@ -43,6 +54,7 @@
                             编辑</a>
                     </div>
                 </div>
+                <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             </div>
             <!--回复-->
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -104,12 +116,12 @@
                     <div class="media">
                         <div class="media-left">
                             <a href="#">
-                                <img class="media-object img-rounded" th:src="${question.user.avatarUrl}">
+                                <img class="media-object img-rounded" th:src="${session.user == null ? '/images/default-avatar.png' : session.user.avatarUrl}">
                             </a>
                         </div>
                         <div class="media-body">
                             <h5 class="media-heading">
-                                <a th:href="@{'/question/'+ ${question.id}}" th:text="${question.user.name}"></a>
+                                <a th:href="@{'/question/'+ ${question.id}}" th:text="${session.user == null ? '匿名用户' : session.user.name}"></a>
                             </h5>
                         </div>
                     </div>

@@ -2,6 +2,7 @@ package com.yichen.community.service;
 
 import com.yichen.community.dto.PaginationDTO;
 import com.yichen.community.dto.QuestionDTO;
+import com.yichen.community.dto.QuestionQueryDTO;
 import com.yichen.community.exception.CustomizeErrorCode;
 import com.yichen.community.exception.CustomizeException;
 import com.yichen.community.mapper.QuestionExtMapper;
@@ -34,9 +35,21 @@ public class QuestionService {
     @Autowired
     UserMapper userMapper;
 
-    public PaginationDTO list(Integer page, Integer size) {
-        PaginationDTO paginationDTO = new PaginationDTO();
-        Integer totalCount = (int) questionMapper.countByExample(new QuestionExample());
+    public PaginationDTO list(String search, Integer page, Integer size) {
+        if(StringUtils.isNotBlank(search)) {
+            String tags[] = StringUtils.split(search,' ');
+            String tagReg = Arrays.stream(tags).collect(Collectors.joining("|"));
+        }
+
+
+
+        PaginationDTO<QuestionDTO> paginationDTO = new PaginationDTO();
+        QuestionQueryDTO questionQueryDTO = new QuestionQueryDTO();
+        //set Search Content
+        questionQueryDTO.setSearch(search);
+        //set Page and Size
+
+        Integer totalCount = questionExtMapper.countBySearch(questionQueryDTO);
         Integer totalPage;
         if (totalCount % size == 0) {
             totalPage = totalCount / size;
@@ -54,9 +67,10 @@ public class QuestionService {
         Integer offset = size * (page - 1);
         List<QuestionDTO> questionDTOList = new ArrayList<>();
 
-        QuestionExample questionExample = new QuestionExample();
-        questionExample.setOrderByClause("gmt_create desc");
-        List<Question> questionList = questionMapper.selectByExampleWithRowbounds(questionExample, new RowBounds(offset, size));
+
+        questionQueryDTO.setOffset(offset);
+        questionQueryDTO.setSize(size);
+        List<Question> questionList = questionExtMapper.selectBySearch(questionQueryDTO);
 
 
         for (Question question : questionList) {
@@ -66,12 +80,13 @@ public class QuestionService {
             questionDTO.setUser(user);
             questionDTOList.add(questionDTO);
         }
-        paginationDTO.setQuestionDTOList(questionDTOList);
+        paginationDTO.setData(questionDTOList);
         return paginationDTO;
     }
 
     public PaginationDTO list(Long userId, Integer page, Integer size) {
-        PaginationDTO paginationDTO = new PaginationDTO();
+
+        PaginationDTO<QuestionDTO> paginationDTO = new PaginationDTO();
         QuestionExample questionExample = new QuestionExample();
         questionExample.createCriteria().andCreatorEqualTo(userId);
         Integer totalCount = (int) questionMapper.countByExample(questionExample);
@@ -107,7 +122,7 @@ public class QuestionService {
             questionDTO.setUser(user);
             questionDTOList.add(questionDTO);
         }
-        paginationDTO.setQuestionDTOList(questionDTOList);
+        paginationDTO.setData(questionDTOList);
         return paginationDTO;
     }
 

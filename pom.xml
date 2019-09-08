@@ -18,6 +18,20 @@
         <java.version>1.8</java.version>
     </properties>
 
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <db.url>jdbc:h2:~/community</db.url>
+                <db.user>sa</db.user>
+                <db.password>123</db.password>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+    </profiles>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -57,11 +71,11 @@
             <version>1.4.199</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
-        <!--<dependency>-->
-        <!--<groupId>mysql</groupId>-->
-        <!--<artifactId>mysql-connector-java</artifactId>-->
-        <!--<version>8.0.15</version>-->
-        <!--</dependency>-->
+        <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>8.0.15</version>
+        </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -97,9 +111,9 @@
                 <artifactId>flyway-maven-plugin</artifactId>
                 <version>6.0.1</version>
                 <configuration>
-                    <url>jdbc:h2:~/community</url>
-                    <user>sa</user>
-                    <password>123</password>
+                    <url>${db.url}</url>
+                    <user>${db.user}</user>
+                    <password>${db.password}</password>
                 </configuration>
                 <dependencies>
                     <dependency>
@@ -128,5 +142,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

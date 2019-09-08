@@ -2,6 +2,8 @@ package com.yichen.community.controller;
 
 import com.yichen.community.cache.TagCache;
 import com.yichen.community.dto.QuestionDTO;
+import com.yichen.community.exception.CustomizeErrorCode;
+import com.yichen.community.exception.CustomizeException;
 import com.yichen.community.mapper.QuestionMapper;
 import com.yichen.community.mapper.UserMapper;
 import com.yichen.community.model.Question;
@@ -40,6 +42,7 @@ public class PublishController {
             @RequestParam(value = "description", required = false) String description,
             @RequestParam(value = "tag", required = false) String tag,
             @RequestParam(value = "id", required = false) Long id,
+            @RequestParam(value = "creatorId") Long creatorId,
             HttpServletRequest httpServletRequest,
             Model model) {
 
@@ -55,6 +58,7 @@ public class PublishController {
             model.addAttribute("error", "用户未登录");
             return "publish";
         }
+
 
         if(title == null || title == "") {
             model.addAttribute("error", "标题不能为空");
@@ -75,6 +79,11 @@ public class PublishController {
         if(StringUtils.isNotBlank(invalid)) {
             model.addAttribute("error", "输入非法标签" + invalid);
             return "publish";
+        }
+
+
+        if(user.getId() != creatorId) {
+            throw new CustomizeException(CustomizeErrorCode.PERMISSION_DENIED);
         }
 
         Question question = new Question();

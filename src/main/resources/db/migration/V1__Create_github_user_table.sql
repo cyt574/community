@@ -1,4 +1,4 @@
-create table USER
+create table github_user
 (
 	ID INTEGER auto_increment,
 	ACCOUNT_ID VARCHAR(100),

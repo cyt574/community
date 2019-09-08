@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,10 +63,8 @@ public class QuestionService {
         }
         paginationDTO.setPagination(totalPage, page);
 
-        Integer offset = size * (page - 1);
+        Integer offset = page < 1 ? 0 : size * (page - 1);
         List<QuestionDTO> questionDTOList = new ArrayList<>();
-
-
         questionQueryDTO.setOffset(offset);
         questionQueryDTO.setSize(size);
         List<Question> questionList = questionExtMapper.selectBySearch(questionQueryDTO);

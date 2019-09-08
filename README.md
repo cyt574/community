@@ -14,6 +14,7 @@
 - yum install maven;mvn -v
 - mvn clean compile package
 - java -jar -Dspring.profiles.active=prod target/community-0.0.1-SNAPSHOT.jar
+- git pull
 
 
 ## 资料

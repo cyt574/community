@@ -31,16 +31,24 @@ public class StaticScheduleTask {
         StaticScheduleTask.tagList = tagList;
     }
 
-    @Scheduled(cron = "0 0 1 * * ?")
+//    @Scheduled(cron = "0 0 1 * * ?")
+    @Scheduled(fixedRate=10800000)
     private void updateQuestionHotTasks() {
         if (!questionService.updateQuestionHotTopic()) {
             log.info("update question hot topic failed!!!");
+        } else  {
+            log.info("update question hot topic succeed!!!");
         }
     }
-//    @Scheduled(cron = "0 0 0 * * ?")
-    @Scheduled(fixedRate=36000000)
+ //   @Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(fixedRate=10800000)
     private void updateTagsHotTasks() {
         tagList = questionService.updateTagHotTopic();
-        log.info("update question hot topic failed!!!");
+        if(tagList != null || tagList.size() > 0){
+            log.info("update tag hot topic succeed!!!");
+        } else {
+            log.info("update tag hot topic failed!!!");
+
+        }
     }
 }

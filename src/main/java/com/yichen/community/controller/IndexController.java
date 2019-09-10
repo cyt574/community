@@ -11,6 +11,7 @@ import com.yichen.community.service.NotificationService;
 import com.yichen.community.service.QuestionService;
 import com.yichen.community.utils.StaticScheduleTask;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -40,10 +41,11 @@ public class IndexController {
                         @RequestParam(value = "page", defaultValue = "1")Integer page,
                         @RequestParam(value = "size", defaultValue = "10")Integer size,
                         @RequestParam(value = "search", required = false)String search,
-                        @RequestParam(value = "type", required = false)Integer type){
+                        @RequestParam(value = "type", required = false)Integer type,
+                        @RequestParam(value = "tag", required = false)String tag){
         PaginationDTO paginationDTO;
-        if(type != null) {
-            paginationDTO = questionService.list(search, page, size, type);
+        if(type != null || StringUtils.isNotBlank(tag)) {
+            paginationDTO = questionService.list(search, page, size, type, tag);
         } else {
             paginationDTO = questionService.list(search, page, size);
         }
@@ -51,6 +53,7 @@ public class IndexController {
         model.addAttribute("pagination", paginationDTO);
         model.addAttribute("search", search);
         model.addAttribute("type", type);
+        model.addAttribute("tag", tag);
         model.addAttribute("tags", StaticScheduleTask.getTagList());
         return "index";
     }

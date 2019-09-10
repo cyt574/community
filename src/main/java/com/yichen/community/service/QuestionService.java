@@ -193,7 +193,7 @@ public class QuestionService {
         return questionDTOS;
     }
 
-    public PaginationDTO list(String search, Integer page, Integer size, Integer type) {
+    public PaginationDTO list(String search, Integer page, Integer size, Integer type, String tag) {
         String tagReg = null;
         if(StringUtils.isNotBlank(search)) {
             String tags[] = StringUtils.split(search,' ');
@@ -205,20 +205,27 @@ public class QuestionService {
         //set Search Content
         questionQueryDTO.setSearch(tagReg);
 
-        if(type.equals(QuestionTypeEnum.ZERO.getType())) {
-            questionQueryDTO.setCommentCount(0);
-        } else if (type.equals(QuestionTypeEnum.HOT_IN_30D.getType())){
-            questionQueryDTO.setOrderRule("hot_in_30d desc");
-        } else if (type.equals(QuestionTypeEnum.HOT_IN_15D.getType())){
-            questionQueryDTO.setOrderRule("hot_in_15d desc");
-        } else if (type.equals(QuestionTypeEnum.HOT_IN_7D.getType())){
-            questionQueryDTO.setOrderRule("hot_in_7d desc");
-        } else if (type.equals(QuestionTypeEnum.HOT_IN_ALL.getType())){
-            questionQueryDTO.setOrderRule("view_count desc");
-        } else if (type.equals(QuestionTypeEnum.RECOMMEND.getType())) {
-            questionQueryDTO.setOrderRule("like_count desc");
+        if(StringUtils.isNotBlank(tag)) {
+            String finalTag = StringUtils.join("^"+tag+"$|"+tag+",|,"+tag);
+            questionQueryDTO.setTag(finalTag);
         }
 
+
+        if(type != null) {
+            if(type.equals(QuestionTypeEnum.ZERO.getType())) {
+                questionQueryDTO.setCommentCount(0);
+            } else if (type.equals(QuestionTypeEnum.HOT_IN_30D.getType())){
+                questionQueryDTO.setOrderRule("hot_in_30d desc");
+            } else if (type.equals(QuestionTypeEnum.HOT_IN_15D.getType())){
+                questionQueryDTO.setOrderRule("hot_in_15d desc");
+            } else if (type.equals(QuestionTypeEnum.HOT_IN_7D.getType())){
+                questionQueryDTO.setOrderRule("hot_in_7d desc");
+            } else if (type.equals(QuestionTypeEnum.HOT_IN_ALL.getType())){
+                questionQueryDTO.setOrderRule("view_count desc");
+            } else if (type.equals(QuestionTypeEnum.RECOMMEND.getType())) {
+                questionQueryDTO.setOrderRule("like_count desc");
+            }
+        }
         //set Page and Size
         Integer totalCount = questionExtMapper.countBySearch(questionQueryDTO);
         Integer totalPage;
@@ -260,33 +267,44 @@ public class QuestionService {
     }
 
     public boolean updateQuestionHotTopic() {
-        long newTime = System.currentTimeMillis();
-        long sevenDayEarly = newTime - 60 * 60 * 24 * 7;
-        long fifteenDayEarly = newTime - 60 * 60 * 24 * 15;
-        long thirtyDayEarly = newTime - 60 * 60 * 24 * 30;
+        long nowTime = System.currentTimeMillis();
+        long sevenDayEarly = nowTime - 60 * 60 * 24 * 7 * 1000L;
+        long fifteenDayEarly = nowTime - 60 * 60 * 24 * 15 * 1000L;
+        long thirtyDayEarly = nowTime - 60 * 60 * 24 * 30 * 1000L;
 
         QuestionExample example = new QuestionExample();
-        example.createCriteria().andGmtCreateBetween(sevenDayEarly, newTime);
+        example.createCriteria().andGmtCreateGreaterThan(thirtyDayEarly);
         List<Question> questions = questionMapper.selectByExample(example);
 
         List<Comment> sevenDaycommentList = null;
         List<Comment> fifteenDaycommentList = null;
         List<Comment> thirtyDaycommentList = null;
-        CommentExample commentExample = new CommentExample();
+
         for (Question question : questions) {
-            commentExample.createCriteria().andGmtCreateBetween(sevenDayEarly, newTime).andParentIdEqualTo(question.getId());
-            sevenDaycommentList = commentMapper.selectByExample(commentExample);
+            CommentExample commentExample1 = new CommentExample();
+            commentExample1.createCriteria().andGmtCreateGreaterThan(sevenDayEarly)
+                    .andParentIdEqualTo(question.getId())
+                    .andTypeEqualTo(CommentTypeEnum.QUESTION.getType());
+            sevenDaycommentList = commentMapper.selectByExample(commentExample1);
 
-            commentExample.createCriteria().andGmtCreateBetween(fifteenDayEarly, newTime).andParentIdEqualTo(question.getId());
-            fifteenDaycommentList = commentMapper.selectByExample(commentExample);
 
-            commentExample.createCriteria().andGmtCreateBetween(thirtyDayEarly, newTime).andParentIdEqualTo(question.getId());
-            thirtyDaycommentList = commentMapper.selectByExample(commentExample);
+            CommentExample commentExample2 = new CommentExample();
+            commentExample2.createCriteria().andGmtCreateGreaterThan(fifteenDayEarly)
+                    .andParentIdEqualTo(question.getId())
+                    .andTypeEqualTo(CommentTypeEnum.QUESTION.getType());
+            fifteenDaycommentList = commentMapper.selectByExample(commentExample2);
+
+            CommentExample commentExample3 = new CommentExample();
+            commentExample3.createCriteria().andGmtCreateGreaterThan(thirtyDayEarly)
+                    .andParentIdEqualTo(question.getId())
+                    .andTypeEqualTo(CommentTypeEnum.QUESTION.getType());
+            thirtyDaycommentList = commentMapper.selectByExample(commentExample3);
 
             question.setHotIn7d(sevenDaycommentList.size());
             question.setHotIn15d(fifteenDaycommentList.size());
             question.setHotIn30d(thirtyDaycommentList.size());
             questionExtMapper.updateHotTopic(question);
+            System.out.println(question);
         }
 
 
@@ -315,7 +333,7 @@ public class QuestionService {
         for (Map.Entry<String, Integer> mapping : list) {
             tags.add(mapping.getKey());
         }
-
+        Collections.reverse(tags);
         return tags;
     }
 }

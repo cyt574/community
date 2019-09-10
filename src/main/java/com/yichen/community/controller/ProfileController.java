@@ -35,7 +35,7 @@ public class ProfileController {
                           Model model,
                           HttpServletRequest httpServletRequest,
                           @RequestParam(value = "page", defaultValue = "1")Integer page,
-                          @RequestParam(value = "size", defaultValue = "5")Integer size) {
+                          @RequestParam(value = "size", defaultValue = "10")Integer size) {
         User user = (User) httpServletRequest.getSession().getAttribute("user");
         if(user == null) {
             return "redirect:/";

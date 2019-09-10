@@ -38,10 +38,18 @@ h4 {
 
 }
 
+h3 span{
+    font-family: Roboto, Arial, sans-serif;
+}
+
 .nav-title {
     min-height: 63px;
     position: relative;
     padding: 30px 20px 0;
+}
+
+.hot-nav-title li{
+    float: right;
 }
 
 .select-nav-title {
@@ -147,7 +155,7 @@ h4 {
 }
 
 .media-body {
-    padding: 10px;
+    padding-bottom: 15px;
 }
 
 .text-desc {

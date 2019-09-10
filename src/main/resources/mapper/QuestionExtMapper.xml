@@ -55,6 +55,9 @@
       <if test="search != null">
         and title regexp #{search}
       </if>
+      <if test="tag != null">
+        and tag regexp #{tag}
+      </if>
       <if test="commentCount != null">
         and comment_count = #{commentCount}
       </if>
@@ -66,6 +69,9 @@
     <where>
       <if test="search != null">
         and title regexp #{search}
+      </if>
+      <if test="tag != null">
+        and tag regexp #{tag}
       </if>
       <if test="commentCount != null">
         and comment_count = #{commentCount}
@@ -88,9 +94,6 @@
     -->
     update question
     <set>
-      <if test="id != null">
-        id = #{id,jdbcType=BIGINT},
-      </if>
       <if test="title != null">
         title = #{title,jdbcType=VARCHAR},
       </if>
@@ -125,54 +128,26 @@
         hot_in_7d = hot_in_7d + #{hotIn7d,jdbcType=INTEGER},
       </if>
       <if test="description != null">
-        description = #{description,jdbcType=LONGVARCHAR},
+        description = #{description,jdbcType=LONGVARCHAR}
       </if>
+      where id = #{id}
     </set>
   </update>
 
   <update id="updateHotTopic" parameterType="com.yichen.community.model.Question">
     update question
     <set>
-      <if test="id != null">
-        id = #{id,jdbcType=BIGINT},
-      </if>
-      <if test="title != null">
-        title = #{title,jdbcType=VARCHAR},
-      </if>
-      <if test="gmtCreate != null">
-        gmt_create = #{gmtCreate,jdbcType=BIGINT},
-      </if>
-      <if test="gmtModified != null">
-        gmt_modified = #{gmtModified,jdbcType=BIGINT},
-      </if>
-      <if test="creator != null">
-        creator = #{creator,jdbcType=BIGINT},
-      </if>
-      <if test="commentCount != null">
-        comment_count = #{commentCount,jdbcType=INTEGER},
-      </if>
-      <if test="viewCount != null">
-        view_count = #{viewCount,jdbcType=INTEGER},
-      </if>
-      <if test="likeCount != null">
-        like_count = #{likeCount,jdbcType=INTEGER},
-      </if>
-      <if test="tag != null">
-        tag = #{tag,jdbcType=VARCHAR},
-      </if>
       <if test="hotIn30d != null">
-        hot_in_30d = hot_in_30d + #{hotIn30d,jdbcType=INTEGER},
+        hot_in_30d = #{hotIn30d,jdbcType=INTEGER},
       </if>
       <if test="hotIn15d != null">
-        hot_in_15d = hot_in_15d + #{hotIn15d,jdbcType=INTEGER},
+        hot_in_15d = #{hotIn15d,jdbcType=INTEGER},
       </if>
       <if test="hotIn7d != null">
-        hot_in_7d = hot_in_7d + #{hotIn7d,jdbcType=INTEGER},
-      </if>
-      <if test="description != null">
-        description = #{description,jdbcType=LONGVARCHAR},
+        hot_in_7d = #{hotIn7d,jdbcType=INTEGER}
       </if>
     </set>
+    where id = #{id}
   </update>
 
 </mapper>

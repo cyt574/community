@@ -11,4 +11,5 @@ public class QuestionQueryDTO {
     private Integer commentCount;
     private Integer likeCount;
     private String orderRule;
+    private String tag;
 }

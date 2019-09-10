@@ -1,34 +1,33 @@
-
 /*当浏览器尺寸小于960px时候的代码：*/
-@media screen and (max-width:960px){
+@media screen and (max-width: 960px) {
     .main {
         margin: 15px 15px 15px 15px;
         background-color: white;
         border-radius: 5px;
     }
 }
+
 /*当浏览器尺寸等于960px时候的代码：*/
-@media screen and (max-device-width:960px){
+@media screen and (max-device-width: 960px) {
     .main {
-        margin: 30px 30px 30px 30px;
+        margin: 15px 30px 30px 30px;
         background-color: white;
         border-radius: 5px;
     }
 }
+
 /*当浏览器尺寸大于960px时候的代码：*/
-@media screen and (min-width:960px){
+@media screen and (min-width: 960px) {
     .main {
-        margin: 60px 240px 30px 240px;
+        margin: 15px 240px 30px 240px;
         background-color: white;
         border-radius: 5px;
     }
 }
-
-
 
 body {
     background-color: #efefef;
-    font-family: candara,"Helvetica Neue",Helvetica,Arial,"PingFang SC","Hiragino Sans GB","WenQuanYi Micro Hei","Microsoft Yahei",sans-serif, -apple-system;
+    font-family: candara, "Helvetica Neue", Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "WenQuanYi Micro Hei", "Microsoft Yahei", sans-serif, -apple-system;
 }
 
 hr {
@@ -36,7 +35,26 @@ hr {
 }
 
 h4 {
-    font-weight: bold;
+
+}
+
+.nav-title {
+    min-height: 63px;
+    position: relative;
+    padding: 30px 20px 0;
+}
+
+.select-nav-title {
+    margin: 0;
+    top: 16px;
+    left: 20px;
+    position: absolute;
+}
+.select-nav-title span{
+    margin: 5px;
+}
+.nav-title li{
+    float: right;
 }
 
 .footer {
@@ -62,24 +80,47 @@ h4 {
 .tag-item-box {
     margin-right: 5px;
 }
+.tag-box-index {
+    margin-top: 15px;
+}
+.tag-item-box-index {
+    margin-top: 15px;
+    border-radius: 5px;
+    background-color: #2aabd2;
+    padding: 5px;
+}
+.tag-item-box-index:hover {
+    background-color: #00c4ff;
+}
+.tag-item-box-index a {
+    color: white;
+    text-decoration: none;
+}
 
-#tags-navigation{
+#tags-navigation {
     margin-top: 15px;
     display: none;
 }
+
 .show-logo {
     width: 25px;
     height: 25px;
 }
 
-.show-logo :hover {
+.show-logo:hover {
     width: 30px;
     height: 30px;
 }
 
-.show-logo-head :hover{
+.show-logo-head a{
     text-decoration: none;
-    color: #c9302c;
+}
+.show-logo-head {
+    font-size: 12px;
+}
+.show-logo-head:hover {
+    color: #00c4ff;
+    font-size: 15px;
 }
 
 .question-related {
@@ -152,6 +193,7 @@ h4 {
     margin-right: 6px;
     cursor: pointer;
 }
+
 .icon:hover {
     color: #2aabd2;
 }
@@ -160,7 +202,7 @@ h4 {
     color: #2aabd2;
 }
 
-.menu .comment-icon:hover{
+.menu .comment-icon:hover {
     color: #2aabd2;
     cursor: pointer;
 }
@@ -186,11 +228,11 @@ h4 {
     margin-top: 15px;
 }
 
-.secondary-comment-reply button{
+.secondary-comment-reply button {
 
 }
 
-.secondary-comment-reply input{
+.secondary-comment-reply input {
     display: inline-block;
     width: 90%;
 }

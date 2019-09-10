@@ -7,4 +7,8 @@ public class QuestionQueryDTO {
     private String search;
     private Integer offset;
     private Integer size;
+    private Integer viewCount;
+    private Integer commentCount;
+    private Integer likeCount;
+    private String orderRule;
 }

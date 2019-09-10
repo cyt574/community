@@ -26,6 +26,14 @@
                 <db.user>sa</db.user>
                 <db.password>123</db.password>
             </properties>
+        </profile>
+        <profile>
+            <id>test</id>
+            <properties>
+                <db.url>jdbc:mysql://localhost:3306/community</db.url>
+                <db.user>root</db.user>
+                <db.password>root</db.password>
+            </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
@@ -117,11 +125,17 @@
                 </configuration>
                 <dependencies>
                     <dependency>
-                        <groupId>com.h2database</groupId>
-                        <artifactId>h2</artifactId>
-                        <version>1.4.199</version>
+                        <groupId>mysql</groupId>
+                        <artifactId>mysql-connector-java</artifactId>
+                        <version>8.0.15</version>
                     </dependency>
+                    <!--<dependency>-->
+                        <!--<groupId>com.h2database</groupId>-->
+                        <!--<artifactId>h2</artifactId>-->
+                        <!--<version>1.4.199</version>-->
+                    <!--</dependency>-->
                 </dependencies>
+
             </plugin>
             <plugin>
                 <groupId>org.mybatis.generator</groupId>
@@ -133,11 +147,11 @@
                         <artifactId>mysql-connector-java</artifactId>
                         <version>8.0.15</version>
                     </dependency>
-                    <dependency>
-                        <groupId>com.h2database</groupId>
-                        <artifactId>h2</artifactId>
-                        <version>1.4.199</version>
-                    </dependency>
+                    <!--<dependency>-->
+                        <!--<groupId>com.h2database</groupId>-->
+                        <!--<artifactId>h2</artifactId>-->
+                        <!--<version>1.4.199</version>-->
+                    <!--</dependency>-->
                 </dependencies>
             </plugin>
         </plugins>

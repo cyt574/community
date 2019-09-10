@@ -2,12 +2,14 @@ package com.yichen.community.controller;
 
 import com.yichen.community.dto.PaginationDTO;
 import com.yichen.community.dto.QuestionDTO;
+import com.yichen.community.enums.QuestionTypeEnum;
 import com.yichen.community.mapper.QuestionMapper;
 import com.yichen.community.mapper.UserMapper;
 import com.yichen.community.model.Question;
 import com.yichen.community.model.User;
 import com.yichen.community.service.NotificationService;
 import com.yichen.community.service.QuestionService;
+import com.yichen.community.utils.StaticScheduleTask;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -36,13 +38,21 @@ public class IndexController {
     @GetMapping("/")
     public String index(Model model,
                         @RequestParam(value = "page", defaultValue = "1")Integer page,
-                        @RequestParam(value = "size", defaultValue = "5")Integer size,
-                        @RequestParam(value = "search", required = false)String search){
+                        @RequestParam(value = "size", defaultValue = "10")Integer size,
+                        @RequestParam(value = "search", required = false)String search,
+                        @RequestParam(value = "type", required = false)Integer type){
+        PaginationDTO paginationDTO;
+        if(type != null) {
+            paginationDTO = questionService.list(search, page, size, type);
+        } else {
+            paginationDTO = questionService.list(search, page, size);
+        }
 
-        PaginationDTO paginationDTO = questionService.list(search, page, size);
         model.addAttribute("pagination", paginationDTO);
         model.addAttribute("search", search);
-        log.info("that's good");
+        model.addAttribute("type", type);
+        model.addAttribute("tags", StaticScheduleTask.getTagList());
         return "index";
     }
+
 }

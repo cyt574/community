@@ -1,25 +1,26 @@
 package com.yichen.community.service;
 
+import com.yichen.community.cache.TagCache;
 import com.yichen.community.dto.PaginationDTO;
 import com.yichen.community.dto.QuestionDTO;
 import com.yichen.community.dto.QuestionQueryDTO;
+import com.yichen.community.dto.TagDTO;
+import com.yichen.community.enums.CommentTypeEnum;
+import com.yichen.community.enums.QuestionTypeEnum;
 import com.yichen.community.exception.CustomizeErrorCode;
 import com.yichen.community.exception.CustomizeException;
+import com.yichen.community.mapper.CommentMapper;
 import com.yichen.community.mapper.QuestionExtMapper;
 import com.yichen.community.mapper.QuestionMapper;
 import com.yichen.community.mapper.UserMapper;
-import com.yichen.community.model.Question;
-import com.yichen.community.model.QuestionExample;
-import com.yichen.community.model.User;
+import com.yichen.community.model.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -34,18 +35,20 @@ public class QuestionService {
     @Autowired
     UserMapper userMapper;
 
+    @Autowired
+    CommentMapper commentMapper;
+
     public PaginationDTO list(String search, Integer page, Integer size) {
+        String tagReg = null;
         if(StringUtils.isNotBlank(search)) {
             String tags[] = StringUtils.split(search,' ');
-            String tagReg = Arrays.stream(tags).collect(Collectors.joining("|"));
+            tagReg = Arrays.stream(tags).collect(Collectors.joining("|"));
         }
-
-
 
         PaginationDTO<QuestionDTO> paginationDTO = new PaginationDTO();
         QuestionQueryDTO questionQueryDTO = new QuestionQueryDTO();
         //set Search Content
-        questionQueryDTO.setSearch(search);
+        questionQueryDTO.setSearch(tagReg);
         //set Page and Size
 
         Integer totalCount = questionExtMapper.countBySearch(questionQueryDTO);
@@ -140,6 +143,9 @@ public class QuestionService {
             question.setViewCount(0);
             question.setCommentCount(0);
             question.setLikeCount(0);
+            question.setHotIn7d(0);
+            question.setHotIn15d(0);
+            question.setHotIn30d(0);
             question.setGmtCreate(System.currentTimeMillis());
             question.setGmtModified(question.getGmtCreate());
             questionMapper.insert(question);
@@ -185,5 +191,131 @@ public class QuestionService {
             return quest;
         }).collect(Collectors.toList());
         return questionDTOS;
+    }
+
+    public PaginationDTO list(String search, Integer page, Integer size, Integer type) {
+        String tagReg = null;
+        if(StringUtils.isNotBlank(search)) {
+            String tags[] = StringUtils.split(search,' ');
+            tagReg = Arrays.stream(tags).collect(Collectors.joining("|"));
+        }
+
+        PaginationDTO<QuestionDTO> paginationDTO = new PaginationDTO();
+        QuestionQueryDTO questionQueryDTO = new QuestionQueryDTO();
+        //set Search Content
+        questionQueryDTO.setSearch(tagReg);
+
+        if(type.equals(QuestionTypeEnum.ZERO.getType())) {
+            questionQueryDTO.setCommentCount(0);
+        } else if (type.equals(QuestionTypeEnum.HOT_IN_30D.getType())){
+            questionQueryDTO.setOrderRule("hot_in_30d desc");
+        } else if (type.equals(QuestionTypeEnum.HOT_IN_15D.getType())){
+            questionQueryDTO.setOrderRule("hot_in_15d desc");
+        } else if (type.equals(QuestionTypeEnum.HOT_IN_7D.getType())){
+            questionQueryDTO.setOrderRule("hot_in_7d desc");
+        } else if (type.equals(QuestionTypeEnum.HOT_IN_ALL.getType())){
+            questionQueryDTO.setOrderRule("view_count desc");
+        } else if (type.equals(QuestionTypeEnum.RECOMMEND.getType())) {
+            questionQueryDTO.setOrderRule("like_count desc");
+        }
+
+        //set Page and Size
+        Integer totalCount = questionExtMapper.countBySearch(questionQueryDTO);
+        Integer totalPage;
+        if (totalCount % size == 0) {
+            totalPage = totalCount / size;
+        } else {
+            totalPage = totalCount / size + 1;
+        }
+        if(page < 1) {
+            page = 1;
+        }
+        if(page > totalPage) {
+            page = totalPage;
+        }
+        paginationDTO.setPagination(totalPage, page);
+
+        Integer offset = page < 1 ? 0 : size * (page - 1);
+
+
+        List<QuestionDTO> questionDTOList = new ArrayList<>();
+
+
+
+        questionQueryDTO.setOffset(offset);
+        questionQueryDTO.setSize(size);
+
+        List<Question> questionList = questionExtMapper.selectBySearch(questionQueryDTO);
+
+
+        for (Question question : questionList) {
+            User user = userMapper.selectByPrimaryKey(question.getCreator());
+            QuestionDTO questionDTO = new QuestionDTO();
+            BeanUtils.copyProperties(question, questionDTO);
+            questionDTO.setUser(user);
+            questionDTOList.add(questionDTO);
+        }
+        paginationDTO.setData(questionDTOList);
+        return paginationDTO;
+    }
+
+    public boolean updateQuestionHotTopic() {
+        long newTime = System.currentTimeMillis();
+        long sevenDayEarly = newTime - 60 * 60 * 24 * 7;
+        long fifteenDayEarly = newTime - 60 * 60 * 24 * 15;
+        long thirtyDayEarly = newTime - 60 * 60 * 24 * 30;
+
+        QuestionExample example = new QuestionExample();
+        example.createCriteria().andGmtCreateBetween(sevenDayEarly, newTime);
+        List<Question> questions = questionMapper.selectByExample(example);
+
+        List<Comment> sevenDaycommentList = null;
+        List<Comment> fifteenDaycommentList = null;
+        List<Comment> thirtyDaycommentList = null;
+        CommentExample commentExample = new CommentExample();
+        for (Question question : questions) {
+            commentExample.createCriteria().andGmtCreateBetween(sevenDayEarly, newTime).andParentIdEqualTo(question.getId());
+            sevenDaycommentList = commentMapper.selectByExample(commentExample);
+
+            commentExample.createCriteria().andGmtCreateBetween(fifteenDayEarly, newTime).andParentIdEqualTo(question.getId());
+            fifteenDaycommentList = commentMapper.selectByExample(commentExample);
+
+            commentExample.createCriteria().andGmtCreateBetween(thirtyDayEarly, newTime).andParentIdEqualTo(question.getId());
+            thirtyDaycommentList = commentMapper.selectByExample(commentExample);
+
+            question.setHotIn7d(sevenDaycommentList.size());
+            question.setHotIn15d(fifteenDaycommentList.size());
+            question.setHotIn30d(thirtyDaycommentList.size());
+            questionExtMapper.updateHotTopic(question);
+        }
+
+
+        return true;
+    }
+
+    public List<String> updateTagHotTopic() {
+        QuestionExample example = new QuestionExample();
+        example.createCriteria();
+        List<Question> questions = questionMapper.selectByExample(example);
+        Map<String,Integer> tagsMap= new HashMap<>();
+        for (Question question : questions) {
+            String[] tags = StringUtils.split(question.getTag(), ",");
+            for (String tag : tags) {
+                if(tagsMap.containsKey(tag)) {
+                    tagsMap.put(tag, tagsMap.get(tag) + 1);
+                } else {
+                    tagsMap.put(tag, 1);
+                }
+            }
+        }
+        List<Map.Entry<String, Integer>> list = new ArrayList<>(tagsMap.entrySet());
+        Collections.sort(list, Comparator.comparing(Map.Entry::getValue));
+
+        List<String> tags = new ArrayList<>();
+        for (Map.Entry<String, Integer> mapping : list) {
+            tags.add(mapping.getKey());
+        }
+
+        return tags;
     }
 }

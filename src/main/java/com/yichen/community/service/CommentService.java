@@ -37,7 +37,6 @@ public class CommentService {
     @Autowired
     NotificationMapper notificationMapper;
 
-
     @Transactional
     public void insert(Comment comment, User commentator) {
         if (comment.getParentId() == null || comment.getParentId() == 0) {
@@ -62,12 +61,16 @@ public class CommentService {
             parentComment.setCommentCount(1);
             commentExtMapper.increCommentCount(parentComment);
 
-
             //Notification
             Question dbQuestion = questionMapper.selectByPrimaryKey(dbComment.getParentId());
             if (dbQuestion == null) {
                 throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
             }
+
+            dbQuestion.setHotIn7d(1);
+            dbQuestion.setHotIn15d(1);
+            dbQuestion.setHotIn30d(1);
+            questionExtMapper.updateHotById(dbQuestion);
 
             createNotify(comment, dbComment.getCommentator(), commentator.getName(), dbQuestion.getTitle(), NotificationTypeEnum.REPLY_COMMENT.getType(), dbQuestion.getId());
         } else {
@@ -79,6 +82,9 @@ public class CommentService {
             commentMapper.insert(comment);
 
             //Add question view time
+            dbQuestion.setHotIn7d(1);
+            dbQuestion.setHotIn15d(1);
+            dbQuestion.setHotIn30d(1);
             dbQuestion.setCommentCount(1);
             questionExtMapper.increCommentCount(dbQuestion);
 

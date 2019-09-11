@@ -14,6 +14,7 @@ import com.yichen.community.mapper.QuestionExtMapper;
 import com.yichen.community.mapper.QuestionMapper;
 import com.yichen.community.mapper.UserMapper;
 import com.yichen.community.model.*;
+import com.yichen.community.utils.TimeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
@@ -78,6 +79,7 @@ public class QuestionService {
             QuestionDTO questionDTO = new QuestionDTO();
             BeanUtils.copyProperties(question, questionDTO);
             questionDTO.setUser(user);
+            questionDTO.setTimeCreate(TimeUtils.getFormatedDiffTime(question.getGmtCreate(), System.currentTimeMillis()));
             questionDTOList.add(questionDTO);
         }
         paginationDTO.setData(questionDTOList);
@@ -260,6 +262,7 @@ public class QuestionService {
             QuestionDTO questionDTO = new QuestionDTO();
             BeanUtils.copyProperties(question, questionDTO);
             questionDTO.setUser(user);
+            questionDTO.setTimeCreate(TimeUtils.getFormatedDiffTime(question.getGmtCreate(), System.currentTimeMillis()));
             questionDTOList.add(questionDTO);
         }
         paginationDTO.setData(questionDTOList);
@@ -268,9 +271,9 @@ public class QuestionService {
 
     public boolean updateQuestionHotTopic() {
         long nowTime = System.currentTimeMillis();
-        long sevenDayEarly = nowTime - 60 * 60 * 24 * 7 * 1000L;
-        long fifteenDayEarly = nowTime - 60 * 60 * 24 * 15 * 1000L;
-        long thirtyDayEarly = nowTime - 60 * 60 * 24 * 30 * 1000L;
+        long sevenDayEarly = nowTime - TimeUtils.ONE_WEEK_TIME;
+        long fifteenDayEarly = nowTime - TimeUtils.FIFTEEN_DAY_TIME;
+        long thirtyDayEarly = nowTime - TimeUtils.ONE_MONTH_TIME;
 
         QuestionExample example = new QuestionExample();
         example.createCriteria().andGmtCreateGreaterThan(thirtyDayEarly);

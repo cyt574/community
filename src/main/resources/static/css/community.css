@@ -9,7 +9,7 @@
 }
 
 /*当浏览器尺寸等于960px时候的代码：*/
-@media screen and (max-device-width: 960px) {
+@media screen and (min-width: 960px) and (max-width: 1366px){
     .main {
         margin: 15px 30px 30px 30px;
         background-color: white;
@@ -19,7 +19,7 @@
 }
 
 /*当浏览器尺寸大于960px时候的代码：*/
-@media screen and (min-width: 960px) {
+@media screen and (min-width: 1366px) {
     .main {
         margin: 15px 360px 30px 360px;
         background-color: white;

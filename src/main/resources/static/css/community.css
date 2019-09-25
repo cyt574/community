@@ -30,7 +30,7 @@
 
 body {
     background-color: #efefef;
-    background: url('/images/bg.jpg') repeat;
+    background: url(../images/bg.jpg) repeat;
     font-family: candara, "Helvetica Neue", Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "WenQuanYi Micro Hei", "Microsoft Yahei", sans-serif, -apple-system;
 }
 
@@ -306,7 +306,6 @@ li > a {
 
 #register_form div {
     width: 30%;
-    background;
 }
 
 #register_form ul li button {

@@ -1,5 +1,7 @@
-package com.yichen.community.interceptor;
+package com.yichen.community.config;
 
+import com.yichen.community.interceptor.AuthorizeInterceptor;
+import com.yichen.community.interceptor.SessionInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -20,7 +22,4 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(authorizeInterceptor)
                 .addPathPatterns("/publish");
     }
-
-
-
 }

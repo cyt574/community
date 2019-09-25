@@ -24,7 +24,12 @@ function comment2target(targetId, type, commentContent) {
         }),
         success: function (resp) {
             if (resp.code == 200) {
-                location.reload();
+                swal(resp.message, "你的回复发送成功~", "success", {
+                    buttons: false,
+                    timer: 2000,
+                }).then((resp) => {
+                    location.reload();
+                })
             } else if (resp.code == 2003) {
                 var isAccepted = confirm(resp.message);
                 if (isAccepted) {
@@ -52,6 +57,7 @@ function comment(e) {
 * */
 
 function collapseComments(e) {
+
     var id = e.getAttribute("data-id");
     var collapse = e.getAttribute("data-collapse");
     var comments = $("#comment-" + id);

@@ -29,3 +29,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+#privacy
+/community/src/main/resources/rebel.xml
+/workspace/idea/community/src/main/resources/application.properties

@@ -1,12 +1,10 @@
 package com.yichen.community.service;
 
-import com.yichen.community.cache.TagCache;
-import com.yichen.community.dto.PaginationDTO;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.yichen.community.dto.QuestionDTO;
 import com.yichen.community.dto.QuestionQueryDTO;
-import com.yichen.community.dto.TagDTO;
 import com.yichen.community.enums.CommentTypeEnum;
-import com.yichen.community.enums.QuestionTypeEnum;
 import com.yichen.community.exception.CustomizeErrorCode;
 import com.yichen.community.exception.CustomizeException;
 import com.yichen.community.mapper.CommentMapper;
@@ -15,16 +13,18 @@ import com.yichen.community.mapper.QuestionMapper;
 import com.yichen.community.mapper.UserMapper;
 import com.yichen.community.model.*;
 import com.yichen.community.utils.TimeUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class QuestionService {
 
     @Autowired
@@ -39,98 +39,9 @@ public class QuestionService {
     @Autowired
     CommentMapper commentMapper;
 
-    public PaginationDTO list(String search, Integer page, Integer size) {
-        String tagReg = null;
-        if(StringUtils.isNotBlank(search)) {
-            String tags[] = StringUtils.split(search,' ');
-            tagReg = Arrays.stream(tags).collect(Collectors.joining("|"));
-        }
-
-        PaginationDTO<QuestionDTO> paginationDTO = new PaginationDTO();
-        QuestionQueryDTO questionQueryDTO = new QuestionQueryDTO();
-        //set Search Content
-        questionQueryDTO.setSearch(tagReg);
-        //set Page and Size
-
-        Integer totalCount = questionExtMapper.countBySearch(questionQueryDTO);
-        Integer totalPage;
-        if (totalCount % size == 0) {
-            totalPage = totalCount / size;
-        } else {
-            totalPage = totalCount / size + 1;
-        }
-        if(page < 1) {
-            page = 1;
-        }
-        if(page > totalPage) {
-            page = totalPage;
-        }
-        paginationDTO.setPagination(totalPage, page);
-
-        Integer offset = page < 1 ? 0 : size * (page - 1);
-        List<QuestionDTO> questionDTOList = new ArrayList<>();
-        questionQueryDTO.setOffset(offset);
-        questionQueryDTO.setSize(size);
-        List<Question> questionList = questionExtMapper.selectBySearch(questionQueryDTO);
-
-
-        for (Question question : questionList) {
-            User user = userMapper.selectByPrimaryKey(question.getCreator());
-            QuestionDTO questionDTO = new QuestionDTO();
-            BeanUtils.copyProperties(question, questionDTO);
-            questionDTO.setUser(user);
-            questionDTO.setTimeCreate(TimeUtils.getFormatedDiffTime(question.getGmtCreate(), System.currentTimeMillis()));
-            questionDTOList.add(questionDTO);
-        }
-        paginationDTO.setData(questionDTOList);
-        return paginationDTO;
-    }
-
-    public PaginationDTO list(Long userId, Integer page, Integer size) {
-
-        PaginationDTO<QuestionDTO> paginationDTO = new PaginationDTO();
-        QuestionExample questionExample = new QuestionExample();
-        questionExample.createCriteria().andCreatorEqualTo(userId);
-        Integer totalCount = (int) questionMapper.countByExample(questionExample);
-
-        Integer totalPage;
-        if (totalCount % size == 0) {
-            totalPage = totalCount / size;
-        } else {
-            totalPage = totalCount / size + 1;
-        }
-
-        if(page < 1) {
-            page = 1;
-        }
-
-        if(page > totalPage) {
-            page = totalPage;
-        }
-
-        paginationDTO.setPagination(totalPage, page);
-
-        Integer offset = size * (page - 1);
-        List<QuestionDTO> questionDTOList = new ArrayList<>();
-        QuestionExample example = new QuestionExample();
-        example.createCriteria().andCreatorEqualTo(userId);
-        List<Question> questionList = questionMapper.selectByExampleWithRowbounds(example, new RowBounds(offset, size));
-
-
-        for (Question question : questionList) {
-            User user = userMapper.selectByPrimaryKey(question.getCreator());
-            QuestionDTO questionDTO = new QuestionDTO();
-            BeanUtils.copyProperties(question, questionDTO);
-            questionDTO.setUser(user);
-            questionDTOList.add(questionDTO);
-        }
-        paginationDTO.setData(questionDTOList);
-        return paginationDTO;
-    }
-
     public QuestionDTO getById(Long id) {
         Question question = questionMapper.selectByPrimaryKey(id);
-        if(question == null) {
+        if (question == null) {
             throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
         }
         QuestionDTO questionDTO = new QuestionDTO();
@@ -140,18 +51,26 @@ public class QuestionService {
         return questionDTO;
     }
 
-    public void createOrUpdate(Question question) {
-        if(question.getId() == null) {
+    public void createOrUpdate(Question question, Long userId) {
+
+        if (question.getId() == null) {
             question.setViewCount(0);
             question.setCommentCount(0);
             question.setLikeCount(0);
             question.setHotIn7d(0);
             question.setHotIn15d(0);
             question.setHotIn30d(0);
+            question.setCreator(userId);
             question.setGmtCreate(System.currentTimeMillis());
             question.setGmtModified(question.getGmtCreate());
             questionMapper.insert(question);
         } else {
+            Question dbQuestion = questionMapper.selectByPrimaryKey(question.getId());
+            if (dbQuestion == null) {
+                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+            } else if (userId != dbQuestion.getCreator()) {
+                throw new CustomizeException(CustomizeErrorCode.PERMISSION_DENIED);
+            }
             QuestionExample example = new QuestionExample();
             example.createCriteria().andIdEqualTo(question.getId());
 
@@ -162,8 +81,8 @@ public class QuestionService {
             updateQuestion.setTitle(question.getTitle());
 
             int updated = questionMapper.updateByExampleSelective(updateQuestion, example);
-            if(updated != 1) {
-                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+            if (updated != 1) {
+                throw new CustomizeException(CustomizeErrorCode.QUESTION_PUBLISH_FAIL);
             }
         }
     }
@@ -176,10 +95,10 @@ public class QuestionService {
     }
 
     public List<QuestionDTO> selectRelatedTags(QuestionDTO questionDTO) {
-        if(StringUtils.isBlank(questionDTO.getTag())) {
+        if (StringUtils.isBlank(questionDTO.getTag())) {
             return new ArrayList<>();
         }
-        String tags[] = StringUtils.split(questionDTO.getTag(),',');
+        String tags[] = StringUtils.split(questionDTO.getTag(), ',');
         String tagReg = Arrays.stream(tags).collect(Collectors.joining("|"));
 
         Question question = new Question();
@@ -193,80 +112,6 @@ public class QuestionService {
             return quest;
         }).collect(Collectors.toList());
         return questionDTOS;
-    }
-
-    public PaginationDTO list(String search, Integer page, Integer size, Integer type, String tag) {
-        String tagReg = null;
-        if(StringUtils.isNotBlank(search)) {
-            String tags[] = StringUtils.split(search,' ');
-            tagReg = Arrays.stream(tags).collect(Collectors.joining("|"));
-        }
-
-        PaginationDTO<QuestionDTO> paginationDTO = new PaginationDTO();
-        QuestionQueryDTO questionQueryDTO = new QuestionQueryDTO();
-        //set Search Content
-        questionQueryDTO.setSearch(tagReg);
-
-        if(StringUtils.isNotBlank(tag)) {
-            String finalTag = StringUtils.join("^"+tag+"$|"+tag+",|,"+tag);
-            questionQueryDTO.setTag(finalTag);
-        }
-
-
-        if(type != null) {
-            if(type.equals(QuestionTypeEnum.ZERO.getType())) {
-                questionQueryDTO.setCommentCount(0);
-            } else if (type.equals(QuestionTypeEnum.HOT_IN_30D.getType())){
-                questionQueryDTO.setOrderRule("hot_in_30d desc");
-            } else if (type.equals(QuestionTypeEnum.HOT_IN_15D.getType())){
-                questionQueryDTO.setOrderRule("hot_in_15d desc");
-            } else if (type.equals(QuestionTypeEnum.HOT_IN_7D.getType())){
-                questionQueryDTO.setOrderRule("hot_in_7d desc");
-            } else if (type.equals(QuestionTypeEnum.HOT_IN_ALL.getType())){
-                questionQueryDTO.setOrderRule("view_count desc");
-            } else if (type.equals(QuestionTypeEnum.RECOMMEND.getType())) {
-                questionQueryDTO.setOrderRule("like_count desc");
-            }
-        }
-        //set Page and Size
-        Integer totalCount = questionExtMapper.countBySearch(questionQueryDTO);
-        Integer totalPage;
-        if (totalCount % size == 0) {
-            totalPage = totalCount / size;
-        } else {
-            totalPage = totalCount / size + 1;
-        }
-        if(page < 1) {
-            page = 1;
-        }
-        if(page > totalPage) {
-            page = totalPage;
-        }
-        paginationDTO.setPagination(totalPage, page);
-
-        Integer offset = page < 1 ? 0 : size * (page - 1);
-
-
-        List<QuestionDTO> questionDTOList = new ArrayList<>();
-
-
-
-        questionQueryDTO.setOffset(offset);
-        questionQueryDTO.setSize(size);
-
-        List<Question> questionList = questionExtMapper.selectBySearch(questionQueryDTO);
-
-
-        for (Question question : questionList) {
-            User user = userMapper.selectByPrimaryKey(question.getCreator());
-            QuestionDTO questionDTO = new QuestionDTO();
-            BeanUtils.copyProperties(question, questionDTO);
-            questionDTO.setUser(user);
-            questionDTO.setTimeCreate(TimeUtils.getFormatedDiffTime(question.getGmtCreate(), System.currentTimeMillis()));
-            questionDTOList.add(questionDTO);
-        }
-        paginationDTO.setData(questionDTOList);
-        return paginationDTO;
     }
 
     public boolean updateQuestionHotTopic() {
@@ -318,11 +163,11 @@ public class QuestionService {
         QuestionExample example = new QuestionExample();
         example.createCriteria();
         List<Question> questions = questionMapper.selectByExample(example);
-        Map<String,Integer> tagsMap= new HashMap<>();
+        Map<String, Integer> tagsMap = new HashMap<>();
         for (Question question : questions) {
             String[] tags = StringUtils.split(question.getTag(), ",");
             for (String tag : tags) {
-                if(tagsMap.containsKey(tag)) {
+                if (tagsMap.containsKey(tag)) {
                     tagsMap.put(tag, tagsMap.get(tag) + 1);
                 } else {
                     tagsMap.put(tag, 1);
@@ -339,4 +184,58 @@ public class QuestionService {
         Collections.reverse(tags);
         return tags;
     }
+
+    public PageInfo<QuestionDTO> listBySort(String search, Integer page, Integer size, String orderType, String tag) {
+        QuestionQueryDTO questionQueryDTO = new QuestionQueryDTO();
+        log.info("into function listBySort");
+        if (StringUtils.isNotBlank(search)) {
+            String tags[] = StringUtils.split(search, ' ');
+            String tagReg = Arrays.stream(tags).collect(Collectors.joining("|"));
+            questionQueryDTO.setSearch(tagReg);
+        }
+
+        if (StringUtils.isNotBlank(tag)) {
+            String finalTag = StringUtils.join("^" + tag + "$|" + tag + ",|," + tag);
+            questionQueryDTO.setTag(finalTag);
+        }
+
+        if (orderType != null) {
+            if (orderType.equals("zero")) {
+                questionQueryDTO.setCommentCount(0);
+            } else if (orderType.equals("recommend")) {
+                questionQueryDTO.setOrderRule("like_count desc, view_count desc");
+            } else if (orderType.equals("hotAll")) {
+                questionQueryDTO.setOrderRule("comment_count desc, view_count desc");
+            } else if (orderType.equals("hot1Month")) {
+                questionQueryDTO.setOrderRule("hot_in_30d desc, view_count desc");
+            } else if (orderType.equals("hot1Week")) {
+                questionQueryDTO.setOrderRule("hot_in_7d desc, view_count desc");
+            }
+        }
+
+        PageHelper.startPage(page, size);
+        List<QuestionDTO> questionList = questionExtMapper.selectBySort(questionQueryDTO);
+        for (QuestionDTO qusetion : questionList) {
+            qusetion.setTimeCreate(TimeUtils.getFormatedDiffTime(qusetion.getGmtCreate(), System.currentTimeMillis()));
+        }
+        PageInfo<QuestionDTO> questionDTOPageHelper = new PageInfo<>(questionList);
+        questionDTOPageHelper.setNavigatePages(5);
+        return questionDTOPageHelper;
+    }
+
+    public PageInfo<QuestionDTO> list(Long userId, Integer page, Integer size) {
+
+        PageHelper.startPage(page, size);
+        List<QuestionDTO> questionList = questionExtMapper.selectByCreatorId(userId);
+        for (QuestionDTO questionDTO : questionList) {
+            questionDTO.setTimeCreate(TimeUtils.getFormatedDiffTime(questionDTO.getGmtCreate(), System.currentTimeMillis()));
+        }
+
+        PageInfo<QuestionDTO> questionDTOPageHelper = new PageInfo<>(questionList);
+        questionDTOPageHelper.setNavigatePages(5);
+        return questionDTOPageHelper;
+    }
+
 }
+
+

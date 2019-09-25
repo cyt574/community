@@ -1,5 +1,6 @@
 package com.yichen.community.mapper;
 
+import com.yichen.community.dto.QuestionDTO;
 import com.yichen.community.dto.QuestionQueryDTO;
 import com.yichen.community.model.Question;
 
@@ -12,11 +13,13 @@ public interface QuestionExtMapper {
 
     List<Question> selectRelatedTags(Question question);
 
-    Integer countBySearch(QuestionQueryDTO questionQueryDTO);
+    Integer countBySort(QuestionQueryDTO questionQueryDTO);
 
-    List<Question> selectBySearch(QuestionQueryDTO questionQueryDTO);
+    List<QuestionDTO> selectBySort(QuestionQueryDTO questionQueryDTO);
 
     int updateHotById(Question question);
 
     int updateHotTopic(Question question);
+
+    List<QuestionDTO> selectByCreatorId(Long userId);
 }

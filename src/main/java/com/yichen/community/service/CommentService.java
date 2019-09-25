@@ -70,7 +70,7 @@ public class CommentService {
             dbQuestion.setHotIn7d(1);
             dbQuestion.setHotIn15d(1);
             dbQuestion.setHotIn30d(1);
-            questionExtMapper.updateHotById(dbQuestion);
+            questionExtMapper.updateHotTopic(dbQuestion);
 
             createNotify(comment, dbComment.getCommentator(), commentator.getName(), dbQuestion.getTitle(), NotificationTypeEnum.REPLY_COMMENT.getType(), dbQuestion.getId());
         } else {

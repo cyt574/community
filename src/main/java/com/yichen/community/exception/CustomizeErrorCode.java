@@ -12,7 +12,11 @@ public enum  CustomizeErrorCode implements ICustomizeErrorCode {
     READ_NOTIFICATION_FAIL(2008, "想啥呢老弟!不可以"),
     NOTIFICATION_NOT_FOUND(2009, "消息不翼而飞，稍后重试下吧？"),
     FILE_UPLOAD_FAIL(2010, "图片上传失败了！！！"),
-    PERMISSION_DENIED(2011, "想啥呢，小老弟");
+    PERMISSION_DENIED(2011, "想啥呢，小老弟"),
+    TITLE_IS_EMPTY(2012, "问题标题不能为空！！！"),
+    TAG_IS_EMPTY(2013, "问题标签不能为空！！！"),
+    TAG_IS_INVALID(2014, "无法输入非法标签，请重新输入或者从下方选择"),
+    QUESTION_PUBLISH_FAIL(2015, "问题发表失败，请重试");
 
     private String message;
     private Integer code;

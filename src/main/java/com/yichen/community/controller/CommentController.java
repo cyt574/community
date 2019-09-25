@@ -5,7 +5,6 @@ import com.yichen.community.dto.CommentDTO;
 import com.yichen.community.dto.ResultDTO;
 import com.yichen.community.enums.CommentTypeEnum;
 import com.yichen.community.exception.CustomizeErrorCode;
-import com.yichen.community.mapper.NotificationMapper;
 import com.yichen.community.model.Comment;
 import com.yichen.community.model.User;
 import com.yichen.community.service.CommentService;

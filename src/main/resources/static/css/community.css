@@ -9,7 +9,7 @@
 }
 
 /*当浏览器尺寸等于960px时候的代码：*/
-@media screen and (min-width: 960px) and (max-width: 1366px){
+@media screen and (min-width: 960px) and (max-width: 1366px) {
     .main {
         margin: 15px 30px 30px 30px;
         background-color: white;
@@ -42,7 +42,7 @@ h4 {
 
 }
 
-h3 span{
+h3 span {
     font-family: Roboto, Arial, sans-serif;
 }
 
@@ -53,32 +53,49 @@ h3 span{
     position: fixed;
     top: 0;
     left: 0;
-/* float: left; */
+    /* float: left; */
     border: 0;
-/* overflow: hidden; */
+    /* overflow: hidden; */
 }
+
 .nav-title {
     min-height: 63px;
     position: relative;
     padding: 30px 20px 0;
 }
 
-.hot-nav-title li{
+li > a {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#question_wrapper {
+    margin-top: 15px;
+}
+
+.hot-nav-title li {
     float: right;
+}
+
+.nav-tabs-active {
+    background-color: #EEEEEE;
 }
 
 .select-nav-title {
     margin: 0;
-    top: 16px;
+    top: 20px;
     left: 20px;
     position: absolute;
 }
-.select-nav-title span{
+
+.select-nav-title span {
     margin: 5px;
 }
-.nav-title li{
+
+.nav-title li {
     float: right;
 }
+
 .navbar-customize {
 
 }
@@ -106,29 +123,31 @@ h3 span{
 .tag-item-box {
     margin-right: 5px;
 }
+
 .tag-box-index {
     margin-top: 15px;
 }
+
 .tag-item-box-index {
-    margin-top: 15px;
-    border-radius: 5px;
-    background-color: #A0CFFF;
-    padding: 5px;
-    min-width: 40px;
+    position: relative;
+    margin-top: 5px;
+    margin-right: 5px;
+    border-radius: 3px;
+    background-color: #99cfff;
+    padding: 3px;
+    display: inline-block;
 }
 
-.tag-item-box-index-select {
-    background-color: #00c4ff;
+.tag-item-box-index a {
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
 }
 
 .tag-item-box-index:hover {
     background-color: #00c4ff;
 }
 
-.tag-item-box-index a {
-    color: white;
-    text-decoration: none;
-}
 
 #tags-navigation {
     margin-top: 15px;
@@ -145,12 +164,14 @@ h3 span{
     height: 30px;
 }
 
-.show-logo-head a{
+.show-logo-head a {
     text-decoration: none;
 }
+
 .show-logo-head {
     font-size: 12px;
 }
+
 .show-logo-head:hover {
     color: #00c4ff;
     font-size: 15px;
@@ -268,4 +289,37 @@ h3 span{
 .secondary-comment-reply input {
     display: inline-block;
     width: 90%;
+}
+
+
+#div-modal {
+    position: absolute;
+    width: auto;
+    height: auto;
+    left: 50%;
+}
+
+#register_form ul li input {
+    height: 40px;
+    margin-bottom: 10px;
+}
+
+#register_form div {
+    width: 30%;
+    background;
+}
+
+#register_form ul li button {
+    border-radius: 3px;
+    float: right;
+    height: 35px;
+    width: 60px;
+    background: #01c26f;
+    color: #fff;
+    font-size: 14px;
+    background: -webkit-linear-gradient(#1fd783, #1fd06b);
+    background: -o-linear-gradient(#1fd783, #1fd06b);
+    background: -moz-linear-gradient(#1fd783, #1fd06b);
+    background: linear-gradient(#1fd783, #1fd06b);
+    border: transparent 1px;
 }

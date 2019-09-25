@@ -2,8 +2,6 @@ package com.yichen.community.controller;
 
 import com.yichen.community.dto.NotificationDTO;
 import com.yichen.community.enums.NotificationTypeEnum;
-import com.yichen.community.exception.CustomizeErrorCode;
-import com.yichen.community.exception.CustomizeException;
 import com.yichen.community.model.User;
 import com.yichen.community.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -16,5 +16,8 @@ public class QuestionDTO {
     private Integer viewCount;
     private Integer likeCount;
     private User user;
+    private Integer hotIn30d;
+    private Integer hotIn15d;
+    private Integer hotIn7d;
     private String timeCreate;
 }

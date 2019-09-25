@@ -20,6 +20,32 @@
     <result column="hot_in_15d" jdbcType="INTEGER" property="hotIn15d" />
     <result column="hot_in_7d" jdbcType="INTEGER" property="hotIn7d" />
   </resultMap>
+
+  <resultMap id="QuestionDTO" type="com.yichen.community.dto.QuestionDTO">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="qct" jdbcType="BIGINT" property="gmtCreate" />
+    <result column="qmt" jdbcType="BIGINT" property="gmtModified" />
+    <result column="creator" jdbcType="BIGINT" property="creator" />
+    <result column="comment_count" jdbcType="INTEGER" property="commentCount" />
+    <result column="view_count" jdbcType="INTEGER" property="viewCount" />
+    <result column="like_count" jdbcType="INTEGER" property="likeCount" />
+    <result column="tag" jdbcType="VARCHAR" property="tag" />
+    <result column="hot_in_30d" jdbcType="INTEGER" property="hotIn30d" />
+    <result column="hot_in_15d" jdbcType="INTEGER" property="hotIn15d" />
+    <result column="hot_in_7d" jdbcType="INTEGER" property="hotIn7d" />
+    <association property="user" javaType="com.yichen.community.model.User">
+      <result column="account" property="accountId"/>
+      <result column="name" property="name"/>
+      <result column="account_id" property="accountId"/>
+      <result column="token" property="token"/>
+      <result column="uct" property="gmtCreate"/>
+      <result column="umt" property="gmtModified"/>
+      <result column="avatar_url" property="avatarUrl"/>
+      <result column="bio" property="bio"/>
+    </association>
+  </resultMap>
+
   <update id="increView" parameterType="com.yichen.community.model.Question">
     <!--
       WARNING - @mbg.generated
@@ -49,7 +75,7 @@
     select * from question where id != #{id} and tag regexp #{tag}
   </select>
 
-  <select id="countBySearch" parameterType="com.yichen.community.dto.QuestionQueryDTO" resultType="java.lang.Integer">
+  <select id="countBySort" parameterType="com.yichen.community.dto.QuestionQueryDTO" resultType="java.lang.Integer">
     select count(*) from question
     <where>
       <if test="search != null">
@@ -64,9 +90,13 @@
     </where>
   </select>
 
-  <select id="selectBySearch" parameterType="com.yichen.community.dto.QuestionQueryDTO" resultMap="BaseResultMap">
-    select * from question
-    <where>
+  <select id="selectBySort" parameterType="com.yichen.community.dto.QuestionQueryDTO" resultMap="QuestionDTO">
+    select q.id id, q.title title, q.gmt_create qct, q.gmt_modified qmt, q.creator creator, q.comment_count comment_count,
+       q.view_count view_count, q.like_count like_count, q.tag tag, q.hot_in_7d hot_in_7d, q.hot_in_15d hot_in_15d,
+       q.hot_in_30d hot_in_30d, u.account_id account_id, u.name name, u.token token, u.gmt_create uct, u.gmt_modified umt, u.bio bio,
+       u.avatar_url avatar_url from question q, user u
+       where q.creator = u.id
+
       <if test="search != null">
         and title regexp #{search}
       </if>
@@ -76,18 +106,33 @@
       <if test="commentCount != null">
         and comment_count = #{commentCount}
       </if>
-    </where>
     <choose>
       <when test="orderRule != null">
         order by ${orderRule}
       </when>
       <otherwise>
-        order by gmt_create desc
+        order by qct desc
       </otherwise>
     </choose>
-
-    limit #{offset}, #{size}
   </select>
+  <select id="selectByCreatorId" parameterType="java.lang.Integer" resultMap="QuestionDTO">
+    select q.id id, q.title title, q.gmt_create qct, q.gmt_modified qmt, q.creator creator, q.comment_count comment_count,
+       q.view_count view_count, q.like_count like_count, q.tag tag, q.hot_in_7d hot_in_7d, q.hot_in_15d hot_in_15d,
+       q.hot_in_30d hot_in_30d, u.account_id account_id, u.name name, u.token token, u.gmt_create uct, u.gmt_modified umt, u.bio bio,
+       u.avatar_url avatar_url from question q, user u
+       where q.creator = u.id and q.creator = #{creatorId}
+    <choose>
+      <when test="orderRule != null">
+        order by ${orderRule}
+      </when>
+      <otherwise>
+        order by qct desc
+      </otherwise>
+    </choose>
+  </select>
+
+
+
 
 
   <update id="updateHotById" parameterType="com.yichen.community.model.Question">
@@ -95,7 +140,7 @@
     update question
     <set>
       <if test="title != null">
-        title = #{title,jdbcType=VARCHAR},
+        title = #{title},
       </if>
       <if test="gmtCreate != null">
         gmt_create = #{gmtCreate,jdbcType=BIGINT},
@@ -128,7 +173,7 @@
         hot_in_7d = hot_in_7d + #{hotIn7d,jdbcType=INTEGER},
       </if>
       <if test="description != null">
-        description = #{description,jdbcType=LONGVARCHAR}
+        description = #{description,jdbcType=LONGVARCHAR},
       </if>
       where id = #{id}
     </set>

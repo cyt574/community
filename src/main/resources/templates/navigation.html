@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
     <div th:fragment="nav">
-        <nav class="navbar navbar-default">
-            <div class="container-fluid">
+        <nav class="navbar navbar-default navbar-customize">
+            <div class="container-fluid  ">
                 <div class="navbar-header">
                     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
                         <span class="sr-only">以辰社区</span>
@@ -11,9 +12,9 @@
                 </div>
 
                 <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                    <form class="navbar-form navbar-left" action="/" method="get">
+                    <form class="navbar-form navbar-left" th:action="@{/}" method="get">
                         <div class="form-group">
-                            <input type="text" class="form-control" name="search" placeholder="搜索话题">
+                            <input type="text" class="form-control" th:name="search" placeholder="搜索话题" th:value="${search}">
                         </div>
                         <button type="submit" class="btn btn-default">搜索</button>
                     </form>
@@ -21,8 +22,8 @@
                         <li th:if="${session.user!=null}">
                             <a href="/publish">提问</a>
                         </li>
-                        <li>
-                            <a href="/profile/replies">
+                        <li th:if="${session.user != null}">
+                            <a href="/profiles?param=reply">
                                 通知
                                 <span class="badge" th:if="${session.unreadCount != 0}" th:text="${session.unreadCount}"></span>
                             </a>
@@ -32,15 +33,18 @@
                                 <span th:text="${session.user.getName()}"></span>
                                 <span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="/profile/questions">我的问题</a></li>
+                                <li><a href="/profiles?param=question">我的问题</a></li>
                                 <li role="separator" class="divider"></li>
                                 <li><a href="/logout">退出登录</a></li>
                             </ul>
                         </li>
-                        <li th:if="${session.user == null}"><a th:href="@{https://github.com/login/oauth/authorize(client_id='1352e765cd2b5821e6a7',redirect_uri=${#httpServletRequest.getRequestURL() + 'callback'},scope='user',state=1)}">登录</a></li>
+                        <li th:if="${session.user == null}"><a class="globalLoginBtn" >登录</a></li>
                     </ul>
                 </div>
             </div>
         </nav>
+        <div th:insert="~{modal :: modal}"  id="modal-control" ></div>
     </div>
+
+
 </html>

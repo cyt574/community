@@ -1,27 +1,19 @@
 package com.yichen.community.controller;
 
-import com.yichen.community.dto.PaginationDTO;
-import com.yichen.community.dto.QuestionDTO;
-import com.yichen.community.enums.QuestionTypeEnum;
-import com.yichen.community.mapper.QuestionMapper;
+import com.github.pagehelper.PageInfo;
+import com.yichen.community.dto.*;
 import com.yichen.community.mapper.UserMapper;
-import com.yichen.community.model.Question;
-import com.yichen.community.model.User;
 import com.yichen.community.service.NotificationService;
 import com.yichen.community.service.QuestionService;
 import com.yichen.community.utils.StaticScheduleTask;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
 @Controller
 @Slf4j
@@ -36,26 +28,34 @@ public class IndexController {
     @Autowired
     NotificationService notificationService;
 
-    @GetMapping("/")
-    public String index(Model model,
-                        @RequestParam(value = "page", defaultValue = "1")Integer page,
-                        @RequestParam(value = "size", defaultValue = "10")Integer size,
-                        @RequestParam(value = "search", required = false)String search,
-                        @RequestParam(value = "type", required = false)Integer type,
-                        @RequestParam(value = "tag", required = false)String tag){
-        PaginationDTO paginationDTO;
-        if(type != null || StringUtils.isNotBlank(tag)) {
-            paginationDTO = questionService.list(search, page, size, type, tag);
-        } else {
-            paginationDTO = questionService.list(search, page, size);
-        }
-
-        model.addAttribute("pagination", paginationDTO);
-        model.addAttribute("search", search);
-        model.addAttribute("type", type);
-        model.addAttribute("tag", tag);
-        model.addAttribute("tags", StaticScheduleTask.getTagList());
+    @GetMapping(value = {"", "/", "/index"})
+    public String index(@RequestParam(value = "tag", required = false) String tag,
+                        @RequestParam(value = "search", required = false) String search,
+                        @RequestParam(value = "category", defaultValue = "0") String category,
+                        Map<String, Object> map) {
+        map.put("tag", tag);
+        map.put("search", search);
+        map.put("category", category);
         return "index";
     }
 
+
+    @GetMapping("/getQuestionList")
+    @ResponseBody
+    public ResultDTO getQuestionList(@RequestParam(value = "page", defaultValue = "1") Integer page,
+                                                            @RequestParam(value = "size", defaultValue = "15") Integer size,
+                                                            @RequestParam(value = "search", required = false) String search,
+                                                            @RequestParam(value = "order", required = false) String order,
+                                                            @RequestParam(value = "tag", required = false) String tag,
+                                                            @RequestParam(value = "category", required = false) String category) {
+
+        PageInfo<QuestionDTO>  questionDTOPageHelper = questionService.listBySort(search, page, size, order, tag);
+        return ResultDTO.okOf(questionDTOPageHelper);
+    }
+
+    @GetMapping("/getTagList")
+    @ResponseBody
+    public ResultDTO getTagList() {
+        return ResultDTO.okOf(StaticScheduleTask.getTagList());
+    }
 }

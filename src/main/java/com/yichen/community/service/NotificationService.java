@@ -1,6 +1,8 @@
 package com.yichen.community.service;
 
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.yichen.community.dto.NotificationDTO;
 import com.yichen.community.dto.PaginationDTO;
 import com.yichen.community.enums.NotificationStatusEnum;
@@ -30,48 +32,14 @@ public class NotificationService {
     @Autowired
     UserMapper userMapper;
 
-    public PaginationDTO<NotificationDTO> list(Long userid, Integer page, Integer size) {
-        PaginationDTO<NotificationDTO> paginationDTO = new PaginationDTO();
-        NotificationExample notificationExample = new NotificationExample();
-        notificationExample.createCriteria().andReceiverEqualTo(userid);
-        Integer totalCount = (int) notificationMapper.countByExample(notificationExample);
-
-        Integer totalPage;
-        if (totalCount % size == 0) {
-            totalPage = totalCount / size;
-        } else {
-            totalPage = totalCount / size + 1;
-        }
-
-        if(page < 1) {
-            page = 1;
-        }
-
-        if(page > totalPage) {
-            page = totalPage;
-        }
-
-        paginationDTO.setPagination(totalPage, page);
-
-        Integer offset = size * (page - 1);
-        List<NotificationDTO> notificationDTOList = new ArrayList<>();
+    public PageInfo<Notification> list(Long userid, Integer page, Integer size) {
+        PageHelper.startPage(page, size);
         NotificationExample example = new NotificationExample();
         example.createCriteria().andReceiverEqualTo(userid);
         example.setOrderByClause("gmt_create desc");
-        List<Notification> notificationList = notificationMapper.selectByExampleWithRowbounds(example, new RowBounds(offset, size));
-
-        if(notificationList.size() == 0) {
-            return paginationDTO;
-        }
-
-        for (Notification notification : notificationList) {
-            NotificationDTO notificationDTO = new NotificationDTO();
-            BeanUtils.copyProperties(notification, notificationDTO);
-            notificationDTO.setTypeName(NotificationTypeEnum.nameOfType(notification.getType()));
-            notificationDTOList.add(notificationDTO);
-        }
-        paginationDTO.setData(notificationDTOList);
-        return paginationDTO;
+        List<Notification> notificationList = notificationMapper.selectByExample(example);
+        PageInfo<Notification> notificationPageInfo = new PageInfo<>(notificationList);
+        return notificationPageInfo;
 
     }
 

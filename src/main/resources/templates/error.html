@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:insert="~{header :: head}"></head>
+<head th:replace="header :: head(~{},~{},~{})"></head>
 <body>
 <div th:insert="~{navigation :: nav}"></div>
 <div class="jumbotron">

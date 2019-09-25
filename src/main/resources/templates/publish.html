@@ -1,22 +1,20 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:insert="~{header :: head}"></head>
-<head>
+<head th:replace="header :: head(~{::title},~{},~{})">
     <title>发布 - 以辰社区</title>
-    <link rel="stylesheet" href="/css/editormd.min.css" />
-    <script src="/js/editormd.min.js" type="application/javascript"></script>
 </head>
 <body>
-<div th:insert="~{navigation :: nav}"></div>
 
+<script th:src="@{/js/editormd.min.js}" type="application/javascript"></script>
+
+<div th:insert="~{navigation :: nav}"></div>
 <div class="container-fluid main">
     <div class="row">
         <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
             <h2><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>发起</h2>
             <hr/>
-            <form action="/publish" method="post">
+            <form id="publish_form">
                 <input type="hidden" name="id" th:value="${id}">
-                <input type="hidden" name="creatorId" th:value="${session.user.id}">
                 <div class="form-group">
                     <label for="title">问题标题 (简单扼要) :</label>
                     <input type="text" class="form-control" th:value="${title}" id="title" name="title"
@@ -31,16 +29,16 @@
                               rows="10"></textarea>
                 </div>
                 <script type="text/javascript">
-                    $(function() {
+                    $(function () {
                         var editor = editormd("question-editor", {
-                            width  : "100%",
-                            height : 350,
-                            path   : "/js/lib/",
+                            width: "100%",
+                            height: 600,
+                            path: "/js/lib/",
                             delay: 0,
                             watch: false,
                             placeholder: "问题补充 (必填，请按照右侧提示) :",
-                            imageUpload   : true,          // Enable/disable upload
-                            imageFormats  : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+                            imageUpload: true,          // Enable/disable upload
+                            imageFormats: ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
                             imageUploadURL: "/file/upload"       // Upload url
                         });
                     });
@@ -52,7 +50,8 @@
                     <div id="tags-navigation">
                         <!-- Nav tabs -->
                         <ul class="nav nav-tabs" role="tablist">
-                            <li role="presentation" th:each="selectCategory,categoryState : ${tags}" th:class="${categoryState.first? 'active': ''}">
+                            <li role="presentation" th:each="selectCategory,categoryState : ${tags}"
+                                th:class="${categoryState.first? 'active': ''}">
                                 <a th:href="${'#' + selectCategory.getCategoryName()}" aria-controls="home" role="tab"
                                    data-toggle="tab" th:text="${selectCategory.getCategoryName()}">
                                 </a>
@@ -62,12 +61,13 @@
                         <!-- Tab panes -->
                         <div class="tab-content">
 
-                            <div role="tabpanel" class="tab-pane tab-item" th:each="selectCategory,categoryState : ${tags}"
+                            <div role="tabpanel" class="tab-pane tab-item"
+                                 th:each="selectCategory,categoryState : ${tags}"
                                  th:class="${categoryState.first? 'active tab-pane tab-item': 'tab-pane tab-item'}"
                                  th:id="${selectCategory.getCategoryName()}">
                                 <span class="label label-info question-tags"
                                       th:each="selectTag : ${selectCategory.getTags()}"
-                                      onclick="selectTag(this)" th:data-tag ="${selectTag}">
+                                      onclick="selectTag(this)" th:data-tag="${selectTag}">
                                     <span class="glyphicon glyphicon-tags tag-item-box"></span>
                                     <span th:text="${selectTag}"></span>
                                 </span>
@@ -78,18 +78,19 @@
 
                 <div class="container-fluid">
                     <div class="row">
-                        <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
-                            <div class="alert alert-danger" role="alert"
-                                 th:text="${error}" th:if="${error!=null}"></div>
-                        </div>
-                        <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
-                            <button type="submit" class="btn btn-success btn-publish">发布</button>
+                        <!--<div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">-->
+                        <!--<div class="alert alert-danger" role="alert"-->
+                        <!--th:text="${error}" th:if="${error!=null}"></div>-->
+                        <!--</div>-->
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <!--<button type="submit" class="btn btn-success btn-publish">发布</button>-->
+                            <button onclick="onClickPublish()" class="btn btn-success btn-publish" type="button">发布</button>
                         </div>
                     </div>
                 </div>
             </form>
         </div>
-        <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+        <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12" style="color: #00c4ff">
             <h3>发起问题指南</h3>
             ·问题标题：请用精简的语言描述你发布的问题，不超过25字 <br/>
             ·问题补充：详细补充您的问题内容，并确保问题描述清晰直观，并提供一些相关的资料 <br/>
@@ -98,5 +99,59 @@
     </div>
 </div>
 <div th:insert="~{footer :: foot}"></div>
+<script type="application/javascript">
+    $(function () {
+        $("#btnRegister").bind("click",function () {
+            $("#login_page").hide();
+            $("#register_page").show();
+        });
+    });
+
+    function onClickPublish() {
+        var args = $('#publish_form').serialize();
+        var url = "/publish";
+        $.post({
+            url: url, data: args, success: function(data) {
+                console.log(data);
+                if (data.code == 999) {
+                    swal(data.message, "你的问题发送成功，撒花庆祝~", "success", {
+                        buttons: false,
+                        timer: 2000,
+                    }).then((resp) => {
+                        window:location.href = "/"
+                    })
+                } else if (data.code == 2003) {
+                    swal(data.message, "瓜娃子，你先登录好伐！", "success", {
+                        buttons: false,
+                        timer: 2000,
+                    }).then((resp) => {
+                        window:location.href = "/"
+                    });
+                } else {
+                    swal(data.message, data.message, "warning");
+                }
+            }
+        });
+    }
+
+
+    function login_popup() {
+        $("#loginModal").modal("show")
+    }
+    $(".globalLoginBtn").on("click", login_popup),function() {
+        var e = [];
+        $(".modal").on("show.bs.modal",
+            function() {
+                for (var s = 0; e.length > s; s++) e[s] && (e[s].modal("hide"), e[s] = null);
+                e.push($(this));
+                var o = $(this),
+                    a = o.find(".modal-dialog"),
+                    t = $('<div style="display:table; width:100%; height:100%;"></div>');
+                t.html('<div style="vertical-align:middle; display:table-cell;"></div>'),
+                    t.children("div").html(a),
+                    o.html(t)
+            })
+    } ();
+</script>
 </body>
 </html>

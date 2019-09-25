@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:insert="~{header :: head}"></head>
+<head th:replace="header :: head(~{},~{},~{})">
+</head>
 <script type="application/javascript">
     window.onload = function () {
         var closable = window.localStorage.getItem("closable");
@@ -16,102 +17,32 @@
     <div class="row">
         <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
             <div>
-                <ul class="nav nav-tabs nav-title" role="tablist">
-                    <h3 class="select-nav-title"><span class="glyphicon glyphicon-list" aria-hidden="true"></span><span
-                            th:text="${ tag == null ? '发现' : '当前话题：' + tag }"></span></h3>
-                    <li role="presentation" th:class="${type == 6 ? 'active' : ''}"><a th:href="@{/(type=6)}"
-                                                                                       style="color: red">消灭零回复</a></li>
-                    <li role="presentation" th:class="${type == 1 ? 'active' : ''}"><a th:href="@{/(type=1)}">推荐</a>
-                    </li>
-                    <li role="presentation"
-                        th:class="${(type == 2 || type == 3 ||  type == 4  || type == 5)? 'active' : ''}"><a href="#hot"
-                                                                                                             aria-controls="hot"
-                                                                                                             role="tab"
-                                                                                                             data-toggle="tab">热门</a>
-                    </li>
-                    <li role="presentation" th:class="${type == null ? 'active' : ''}"><a href="/">最新</a></li>
+                <ul class="nav nav-tabs nav-title" role="tablist" id="primary-tab">
+                    <h3 class="select-nav-title">
+                        <span class="glyphicon glyphicon-list" aria-hidden="true"></span>
+                        <span id="main-title">发现</span>
+                    </h3>
+                    <li><a id="zero" style="color: red">消灭零回复</a></li>
+                    <li><a id="recommend">推荐</a></li>
+                    <li><a id="hotAll">总热度</a></li>
+                    <li><a id="hot1Month">本月热门</a></li>
+                    <li><a id="hot1Week">本周热门</a></li>
+                    <li><a id="newQuestion">最新</a></li>
                 </ul>
             </div>
-            <div class="tab-content">
-                <div role="tabpanel"
-                     th:class="${(type == 2 || type == 3 ||  type == 4  || type == 5)? 'active tab-pane' : 'tab-pane'}"
-                     id="hot">
-                    <ul class="nav nav-tabs hot-nav-title" role="tablist">
-                        <li><a th:href="@{/(search=${search}, type=2, tag=${tag})}">30天</a></li>
-                        <li><a th:href="@{/(search=${search}, type=3, tag=${tag})}">15天</a></li>
-                        <li><a th:href="@{/(search=${search}, type=4, tag=${tag})}">7天</a></li>
-                        <li><a th:href="@{/(search=${search}, type=5, tag=${tag})}">全部</a></li>
-                    </ul>
-                </div>
-                <div role="tabpanel" th:class="${type == null ? 'tab-pane active' : 'tab-pane'}" id="new"></div>
-                <div role="tabpanel" th:class="${type == 1 ? 'tab-pane active' : 'tab-pane'}" id="commend"></div>
-                <div role="tabpanel" th:class="${type == 6 ? 'tab-pane active' : 'tab-pane'}" class="tab-pane"
-                     id="zero"></div>
+
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div id="question_wrapper"></div>
             </div>
-            <div class="media" th:each="question : ${pagination.data}" style="margin-left: 20px">
-                <div class="media-left">
-                    <a href="#">
-                        <img class="media-object img-rounded" th:src="${question.user.avatarUrl}">
-                    </a>
-                </div>
-                <div class="media-body">
-                    <h4 class="media-heading" style="color: #2860AC">
-                        <a th:href="@{'/question/'+ ${question.id}}" th:text="${question.title}"></a>
-                    </h4>
-                    <!--<span th:text="${question.description}"></span><br/>-->
-                    <span class="text-desc">
-                        <span th:text="${question.commentCount}">
-                        </span> 个评论 •
-                        <span
-                                th:text="${question.viewCount}">
-                        </span> 次浏览 • 用户
-                        <!--<span th:text="${#dates.format(question.getGmtCreate(),'yyyy-MM-dd HH:mm')}">13 Aug 2019</span>-->
-                        <span th:text="${question.user.name}" style="color: #666666"></span>
-                        <span th:text="${' 发布于' + question.timeCreate}">13 Aug 2019</span>
-                    </span>
-                </div>
-            </div>
+            <span class="page_info-area" style="font-size: 12px;"></span>
             <nav aria-label="Page navigation" style="margin-left: 20px">
                 <ul class="pagination">
-                    <li th:if="${pagination.isShowFistPage()}" aria-label="First">
-                        <a th:href="@{/(page=${1}, search=${search}, type=${type}, tag=${tag})}" aria-label="First">
-                            <span aria-hidden="true">&lt;&lt;</span>
-                        </a>
-                    </li>
-                    <li th:if="${pagination.isShowPrevious()}">
-                        <a th:href="@{/(page=${pagination.currentPage - 1}, search=${search}, type=${type}, tag=${tag})}"
-                           aria-label="Previous">
-                            <span aria-hidden="true">&lt;</span>
-                        </a>
-                    </li>
-                    <li th:each="page : ${pagination.pages}" th:class="${pagination.currentPage==page}?'active':''"><a
-                            th:href="@{/(page=${page}, search=${search}, type=${type}, tag=${tag})}" th:text="${page}">page</a>
-                    </li>
-                    <li th:if="${pagination.isShowNext()}">
-                        <a th:href="@{/(page=${pagination.currentPage + 1}, search=${search}, type=${type}, tag=${tag})}"
-                           aria-label="Next">
-                            <span aria-hidden="true">&gt;</span>
-                        </a>
-                    </li>
-                    <li th:if="${pagination.isShowEndPage()}">
-                        <a th:href="@{/(page=${pagination.totalPage}, search=${search}, type=${type}, tag=${tag})}"
-                           aria-label="End">
-                            <span aria-hidden="true">&gt;&gt;</span>
-                        </a>
-                    </li>
                 </ul>
             </nav>
         </div>
         <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
             <h3 style="margin-top: 30px">热门话题</h3>
-            <div class="tag-box-index">
-                <p th:each="count,tagStat : ${tags}" style="margin-top: 15px">
-                    <span th:if="${tagStat.count <= 5}"
-                          th:class="${tag == tagStat.current ? 'tag-item-box-index-select tag-item-box-index':'tag-item-box-index'}">
-                        <a th:text="${tagStat.current}"
-                           th:href="@{/(search=${search}, type=${type}, tag=${tagStat.current})}"></a>
-                    </span>
-                </p>
+            <div id="tag-list">
             </div>
             <hr class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <h3 style="margin-top: 30px">关于本人</h3>
@@ -129,7 +60,24 @@
         </div>
     </div>
 </div>
+
+<form id="main_form">
+    <input type="hidden" name="page" id="pageParam" th:value="${page}">
+    <input type="hidden" name="size" id="sizeParam" th:value="${size}">
+    <input type="hidden" name="order" id="orderParam" th:value="${order}">
+    <input type="hidden" name="search" id="searchParam" th:value="${search}">
+    <input type="hidden" name="tag" id="tagParam" th:value="${tag}">
+    <input type="hidden" name="category" id="categoryParam" th:value="${category}">
+</form>
+
 <div th:insert="~{footer :: foot}"></div>
-<!--<iframe id="bg-iframe" style="z-index:-10;width:100%;height:100%;" frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling="no" allowtransparency="yes" src="fly_flowers.htm"></iframe>-->
+
+<script>
+    $(function () {
+        App.init(1);
+    })
+
+    //   var url = "https://github.com/login/oauth/authorize?client_id=878c456ceffbbaed24fe&redirect_uri=http://localhost:8087/callback&scope=user&state=1"
+</script>
 </body>
 </html>

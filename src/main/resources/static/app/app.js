@@ -2,10 +2,10 @@ var App = function () {
 
     var setTagParam = function (e) {
         $("#tagParam").attr("value", e.getAttribute("data-tag"));
-        $("#main-title").html("当前话题：" + $("#tagParam").val());
+        $("#main-title").html($("#tagParam").val());
     };
 
-    var build_tags_list = function(resp){
+    var buildTagsList = function(resp){
         $("#tag-list").empty();
         var tags = resp.data;
         $.each(tags, function (index, item) {
@@ -24,14 +24,14 @@ var App = function () {
             url: url,
             success: function (resp) {
                 if(resp.code = 200) {
-                    build_tags_list(resp);
+                    buildTagsList(resp);
                 }
             }
         })
     };
 
 
-    var load_question_list = function(resp) {
+    var loadQuestionList = function(resp) {
         $("#question_wrapper").empty();
         var questionList = resp.data.list;
         $.each(questionList, function (index, item) {
@@ -79,7 +79,7 @@ var App = function () {
             success: function (resp) {
                 layer.close(loadingIndex);
                 if (resp.code == 200) {
-                    load_question_list(resp);
+                    loadQuestionList(resp);
                     build_page_nav(resp);
                     $("html,body").animate({scrollTop: 0}, 1);//回到顶端
                 } else {
@@ -198,9 +198,6 @@ var App = function () {
                     setTimeout(function () {
                         window.location.href = "/index";
                     },3000);
-                    // $("#loginModal").modal("hide")
-                    // $(".globalLoginBtn").trigger("click");
-                    // $("#id_register_username").val(resp.username);
                 } else {
                     $("#register-form-tips").html(resp.message);
                     $("#register-form-tips").show();
@@ -208,8 +205,6 @@ var App = function () {
             }
         });
     }
-
-
 
     var login = function() {
         var data = {

@@ -129,7 +129,7 @@
                     </div>
                     <div class="media-body">
                         <h5 class="media-heading">
-                            <a th:href="@{'/question/'+ ${question.id}}" th:text="${question.user.name}"></a>
+                            <a th:href="@{'/profiles?id='+ ${question.user.id}}" th:text="${question.user.name}"></a>
                         </h5>
                     </div>
                 </div>

@@ -39,6 +39,42 @@
                 phone = #{phone}
             </if>
         </where>
-
     </select>
+
+    <select id="getUserFollowerCountById" resultType="java.lang.Integer">
+        select count(*) from user as a inner join user_follower  as uf where a.id = #{id} and a.id = uf.uid
+    </select>
+
+    <select id="getUserFollowingCountById" resultType="java.lang.Integer">
+        select count(*) from user as a inner join user_follower as uf where a.id = #{id} and a.id = uf.fid
+    </select>
+
+    <select id="getUserQuestionCountById" resultType="java.lang.Integer">
+        select count(*) from user as a inner join question as q where a.id = #{id} and a.id = q.creator
+    </select>
+
+
+    <insert id="follow">
+        insert into user_follower (uid,fid) values (#{id},#{fid})
+    </insert>
+
+    <select id="selectByFollower" resultType="com.yichen.community.dto.UserProfileDTO">
+        select a.id, a.`name`, a.phone, a.email, a.avatar_url from user_follower as uf  join user as a where uf.uid = #{id} and uf.fid = a.id
+    </select>
+
+    <select id="selectByFollowing" resultType="com.yichen.community.dto.UserProfileDTO">
+        select a.id, a.`name`, a.phone, a.email, a.avatar_url from user_follower as uf  join user as a where uf.fid = #{id} and uf.uid = a.id
+    </select>
+
+    <select id="getUserProfileById" resultType="com.yichen.community.dto.UserProfileDTO">
+        select a.id, a.`name`, a.phone, a.email, a.avatar_url from user a where id = #{id}
+    </select>
+
+    <select id="getFollowStatus"  resultType="java.lang.Integer">
+        select count(*) from user_follower as u where u.uid = #{uid} and u.fid = #{fid}
+    </select>
+
+    <delete id="unFollow" >
+        delete from user_follower where uid = #{id} and fid = #{fid}
+    </delete>
 </mapper>

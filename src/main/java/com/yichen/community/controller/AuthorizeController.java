@@ -46,11 +46,8 @@ public class AuthorizeController {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private Validator validator;
-
     @GetMapping("/callback")
-    public String callback(@RequestParam(name = "code") String code, @RequestParam(name = "state") String state, HttpServletResponse httpServletResponse) {
+    public String callback(@RequestParam(name = "code") String code, @RequestParam(name = "state") String state, HttpServletResponse httpServletResponse, HttpServletRequest request) {
         AccessTokenDTO accessTokenDTO = new AccessTokenDTO();
         accessTokenDTO.setCode(code);
         accessTokenDTO.setClient_id(clientId);
@@ -69,7 +66,7 @@ public class AuthorizeController {
             userService.createOrUpdate(user);
             //登录成功，写cookie和session
             httpServletResponse.addCookie(new Cookie("token", token));
-//            request.getSession().setAttribute("user", user);
+            request.getSession().setAttribute("user", user);
             return "redirect:/";
         }else {
             return "redirect:/";
@@ -94,7 +91,6 @@ public class AuthorizeController {
     @ResponseBody
     @PostMapping("/register")
     public ResultDTO register(@RequestBody UserDTO userDTO) {
-        BeanValidator.setValidator(validator);
         String validator = BeanValidator.validator(userDTO);
         if(validator != null) {
             return ResultDTO.errorOf(2100, validator);

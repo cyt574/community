@@ -2,6 +2,7 @@ package com.yichen.community.validator;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -30,11 +31,13 @@ import java.util.Set;
  * @version 1.0.0
  * @date 2018/6/26 17:21
  */
+@Component
 public class BeanValidator {
 
     private static Validator validator;
 
-    public static void setValidator(Validator validator) {
+    @Autowired
+    public void setValidator(Validator validator) {
         BeanValidator.validator = validator;
     }
 

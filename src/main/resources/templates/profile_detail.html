@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="header :: head(~{::title},~{},~{})">
+    <title>编辑个人主页 - 以辰社区</title>
+</head>
+<body>
+<div th:insert="~{navigation :: nav}"></div>
+<div class="container-fluid main">
+    <div class="row" style="padding: 15px">
+        <form id="profileForm">
+            <div class="form-group">
+                <label for="inputAccountId">账号名</label>
+                <input type="text" name="accountId" class="form-control" id="inputAccountId" placeholder="请输入账户名(6到20位)"
+                       th:value="${session.user.accountId}">
+            </div>
+            <div class="form-group">
+                <label for="inputUsername">用户昵称</label>
+                <input type="text" name="username" class="form-control" id="inputUsername" placeholder="请输入用户名"
+                       th:value="${session.user.name}">
+            </div>
+            <div class="form-group">
+                <label for="inputEmail">邮箱地址</label>
+                <input type="email" name="email" class="form-control" id="inputEmail" placeholder="请输入邮箱"
+                       th:value="${session.user.email}">
+            </div>
+
+            <div class="form-group">
+                <label for="inputPhone">手机号</label>
+                <input type="phone" name="phone" class="form-control" id="inputPhone" placeholder="请输入手机号"
+                       th:value="${session.user.phone}">
+            </div>
+            <!--<div class="form-group">-->
+                <!--<label for="inputPassword">密码</label>-->
+                <!--<input type="password" name="password" class="form-control" id="inputPassword" placeholder="请输入密码">-->
+            <!--</div>-->
+            <div class="form-group">
+                <span class="radio-inline">
+                    <label>
+                        <input type="radio" name="gender" checked value="0"> 男
+                    </label>
+                </span>
+                <span class="radio-inline">
+                    <label>
+                        <input type="radio" name="gender" value="1"> 女
+                    </label>
+                </span>
+            </div>
+            <div class="form-group">
+                <label for="inputIndustry">行业</label>
+                <input type="text" name="industry" class="form-control" id="inputIndustry" placeholder="请输入行业"
+                       th:value="${profileDetail.industry}">
+            </div>
+            <div class="form-group">
+                <label for="inputProfession">职业</label>
+                <input type="text" name="profession" class="form-control" id="inputProfession" placeholder="请输入职业"
+                       th:value="${profileDetail.profession}">
+            </div>
+            <div class="form-group">
+                <label for="inputSignature">个人签名</label>
+                <textarea class="form-control" name="signature" id="inputSignature" placeholder="请输入个人签名"
+                          th:text="${profileDetail.signature}" style="hidth: 500px"></textarea>
+            </div>
+            <button type="button" class="btn btn-default" onclick="onProfileEdit()">提交修改</button>
+        </form>
+    </div>
+</div>
+<div th:insert="~{footer :: foot}"></div>
+<script>
+
+    function form2JsonString(formId) {
+        var paramArray = $('#' + formId).serializeArray();
+        /*请求参数转json对象*/
+        var jsonObj={};
+        $(paramArray).each(function(){
+            jsonObj[this.name]=this.value;
+        });
+        console.log(jsonObj);
+        // json对象再转换成json字符串
+        return JSON.stringify(jsonObj);
+    }
+    function onProfileEdit() {
+        var data = form2JsonString('profileForm');
+        var url = "/profile/update";
+        $.post({
+            url: url,
+            method: "POST",
+            data: data,
+            contentType: "application/json",
+            success: function (data) {
+                if (data.code == 200) {
+                    swal(data.message, "你的个人资料修改成功", "success", {
+                        buttons: false,
+                        timer: 2000,
+                    }).then((resp) => {
+                        window:location.href = "/profile/detail"
+                    })
+                } else if (data.code == 2003) {
+                    swal(data.message, data.message, "info", {
+                        buttons: false,
+                        timer: 2000,
+                    }).then((resp) => {
+                       // window:location.href = "/"
+                    });
+                } else {
+                    swal(data.message, data.message, "warning");
+                }
+            }
+        })
+    }
+</script>
+</body>
+</html>

@@ -1,11 +1,15 @@
 package com.yichen.community.service;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.yichen.community.dto.UserDTO;
+import com.yichen.community.dto.UserProfileDTO;
 import com.yichen.community.enums.AccountTypeEnum;
 import com.yichen.community.mapper.UserExtMapper;
 import com.yichen.community.mapper.UserMapper;
 import com.yichen.community.model.User;
 import com.yichen.community.model.UserExample;
+import com.yichen.community.utils.TimeUtils;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.crypto.hash.SimpleHash;
 import org.springframework.beans.BeanUtils;
@@ -98,8 +102,8 @@ public class UserService {
         userMapper.deleteByPrimaryKey(id);
     }
 
-    public void update(User u) {
-        userMapper.updateByPrimaryKeySelective(u);
+    public int update(User u) {
+        return userMapper.updateByPrimaryKeySelective(u);
     }
 
     public User get(Long id) {
@@ -118,5 +122,50 @@ public class UserService {
         if(count > 0)
             return true;
         return false;
+    }
+
+    public UserProfileDTO getUserProfileById(Long id) {
+        UserProfileDTO userProfileDTO = userExtMapper.getUserProfileById(id);
+        int followerCount = userExtMapper.getUserFollowerCountById(id);
+        int followingCount = userExtMapper.getUserFollowingCountById(id);
+        int question = userExtMapper.getUserQuestionCountById(id);
+        userProfileDTO.setFollower(followerCount);
+        userProfileDTO.setFollowing(followingCount);
+        userProfileDTO.setQuestion(question);
+        userProfileDTO.setId(id);
+        return userProfileDTO;
+    }
+
+    public int follow(Long id, Long fid) {
+        return userExtMapper.follow(id, fid);
+    }
+
+    public PageInfo<UserProfileDTO> listByFollowing(Long id, Integer page, Integer size) {
+        PageHelper.startPage(page, size);
+
+        List<UserProfileDTO> userDTOList = userExtMapper.selectByFollowing(id);
+//        for (UserDTO qusetion : userDTOList) {
+//            qusetion.setTimeCreate(TimeUtils.getFormatedDiffTime(qusetion.getGmtCreate(), System.currentTimeMillis()));
+//        }
+        PageInfo<UserProfileDTO> userDTOPageInfo = new PageInfo<>(userDTOList);
+        userDTOPageInfo.setNavigatePages(5);
+        return userDTOPageInfo;
+    }
+
+    public PageInfo<UserProfileDTO> listByFollower(Long id, Integer page, Integer size) {
+        PageHelper.startPage(page, size);
+        List<UserProfileDTO> userDTOList = userExtMapper.selectByFollower(id);
+        PageInfo<UserProfileDTO> userDTOPageInfo = new PageInfo<>(userDTOList);
+        userDTOPageInfo.setNavigatePages(5);
+        return userDTOPageInfo;
+    }
+
+    public int getFollowStatus(Long uid, Long fid) {
+        int result = userExtMapper.getFollowStatus(uid, fid);
+        return result;
+    }
+
+    public int unFollow(Long id, Long fid) {
+        return userExtMapper.unFollow(id, fid);
     }
 }

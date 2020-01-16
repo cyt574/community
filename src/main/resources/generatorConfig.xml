@@ -45,26 +45,10 @@
         <table tableName="notification" domainObjectName="Notification" >
         </table>
 
-        <table tableName="role" domainObjectName="Role" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="true" selectByExampleQueryId="false">
-            <property name="my.isgen.usekeys" value="true"/>
-            <property name="useActualColumnNames" value="true"/>
-            <generatedKey column="id" sqlStatement="JDBC"/>
-        </table>
-        <table tableName="permission" domainObjectName="Permission" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="true" selectByExampleQueryId="false">
-            <property name="my.isgen.usekeys" value="true"/>
-            <property name="useActualColumnNames" value="true"/>
-            <generatedKey column="id" sqlStatement="JDBC"/>
-        </table>
-        <table tableName="user_role" domainObjectName="UserRole" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="true" selectByExampleQueryId="false">
-            <property name="my.isgen.usekeys" value="true"/>
-            <property name="useActualColumnNames" value="true"/>
-            <generatedKey column="id" sqlStatement="JDBC"/>
-        </table>
-        <table tableName="role_permission" domainObjectName="RolePermission" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="true" selectByExampleQueryId="false">
-            <property name="my.isgen.usekeys" value="true"/>
-            <property name="useActualColumnNames" value="true"/>
-            <generatedKey column="id" sqlStatement="JDBC"/>
+        <table tableName="user_detail" domainObjectName="UserDetail" >
         </table>
 
+        <table tableName="category" domainObjectName="Category" >
+        </table>
     </context>
 </generatorConfiguration>

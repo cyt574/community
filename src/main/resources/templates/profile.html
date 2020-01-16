@@ -8,7 +8,7 @@
 <div class="container-fluid main profile">
     <div class="row">
         <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
-            <h2><span >个人中心</span></h2>
+            <h2><span>个人中心</span></h2>
             <hr/>
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div id="question_wrapper"></div>
@@ -17,8 +17,18 @@
             <!--回复通知内容-->
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div id="reply_wrapper" class="media">
+                </div>
+            </div>
 
+            <!--回复通知内容-->
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div id="follower_wrapper" class="media">
 
+                </div>
+            </div>
+
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div id="following_wrapper" class="media">
                 </div>
             </div>
 
@@ -32,30 +42,190 @@
 
         </div>
         <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+
+            <div id="profile_page">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <img th:src="${userProfile.avatarUrl}" class="profile_avatar" style="width: 200px; height: 200px;">
+                    <div class="profile_name">
+                        <span th:text="${userProfile.name}">个人主页</span>
+                    </div>
+                </div>
+
+                <div class="profile_detail">
+                    <a type="button">
+                        <div>
+                            <div>关注者</div>
+                            <strong th:text="${userProfile.follower}"></strong>
+                        </div>
+                    </a>
+                    <a type="button">
+                        <div>
+                            <div>关注了</div>
+                            <strong th:text="${userProfile.following}"></strong>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="profile_operate">
+                    <div th:if="${session.user.id != userProfile.id}">
+                        <a id="follow_control" onmouseover="buttonHover()" onmouseout="buttonOut()"
+                           onclick="handleFollowControl()" role="button" th:text="${followStatus}"></a>
+                        <a class="btn btn-default" href="#" role="button">发私信</a>
+                    </div>
+                    <div th:if="${session.user.id == userProfile.id}">
+                        <a class="btn btn-default" href="/profile/detail" role="button">编辑资料</a>
+                    </div>
+
+                    <div th:if="${session.user.id == userProfile.id}">
+                        <a class="btn btn-default" href="/profile/safty" role="button">安全中心</a>
+                    </div>
+                </div>
+            </div>
+
             <div class="list-group section">
-                <a href="#" onclick="setPersonalQuestion()" id="question_trigger" class="list-group-item">我的问题</a>
-                <a href="#" onclick="setPersonalReply()" id="reply_trigger" class="list-group-item">最新回复
+                <a href="#" onclick="setPersonalQuestion()" id="question_trigger" class="list-group-item">我的问题
+                    <span class="badge" th:text="${userProfile.question}"></span>
+                </a>
+                <a href="#" onclick="setPersonalReply()" id="reply_trigger" class="list-group-item" th:if="${session.user.id == userProfile.id}">最新回复
                     <span class="badge" th:text="${session.unreadCount}">0</span>
+                </a>
+                <a href="#" onclick="setPersonalFollower()" id="follower_trigger" class="list-group-item">我的粉丝
+                    <span class="badge" th:text="${userProfile.follower}">0</span>
+                </a>
+                <a href="#" onclick="setPersonalFollowing()" id="following_trigger" class="list-group-item">我的关注
+                    <span class="badge" th:text="${userProfile.following}">0</span>
                 </a>
             </div>
         </div>
     </div>
 </div>
+
+<form style="display: none;">
+    <input id="user_id" th:value="${session.user.id}">
+    <input id="profile_id" th:value="${userProfile.id}">
+    <input id="follow_status" th:value="${followStatus}">
+</form>
 <input id="param" type="hidden" th:value="${sectionParam}"/>
 <div th:insert="~{footer :: foot}"></div>
-<script >
+<script>
     $(function () {
+        if($("#follow_status").val() == "关注他") {
+            $("#follow_control").addClass("btn btn-default")
+        } else {
+            $("#follow_control").addClass("btn btn-primary")
+        }
+
         var model = $("#param").val();
-        if( model == 'reply') {
+        if (model == 'reply') {
             setPersonalReply()
-        } else if(model == 'question') {
+        } else if (model == 'question') {
             setPersonalQuestion()
         }
+
+        if($("#user_id").val() != $("#profile_id").val()) {
+            document.getElementById("question_trigger").childNodes[0].nodeValue = "他的问题"
+            document.getElementById("follower_trigger").childNodes[0].nodeValue = "他的粉丝";
+            document.getElementById("following_trigger").childNodes[0].nodeValue = "他的关注";
+        }
     });
-    function setPersonalReply() {
-        var url = "/profile/replies";
+
+    function handleFollowControl() {
+        var url = $("#follow_status").val() == "关注他" ? "/profile/follow?id="
+            + $("#profile_id").val() + "&fid=" + $("#user_id").val():"/profile/unfollow?id="
+            + $("#profile_id").val() + "&fid=" + $("#user_id").val();
+        $.ajax({
+            url: url,
+            method: "GET",
+            success: function (resp) {
+                if(resp.code == 200) {
+                    // window.location.reload();
+                    if(resp.data == "关注他") {
+                        $("#follow_control").addClass("btn btn-default")
+                    } else {
+                        $("#follow_control").addClass("btn btn-primary")
+                    }
+                    $("#follow_status").val(resp.data)
+                } else {
+                    // swal(resp.data);
+                }
+            }
+        })
+    }
+
+    function buttonOut() {
+        $("#follow_control").text($("#follow_status").val());
+
+        if($("#follow_status").val() == "关注他") {
+            $("#follow_control").removeClass("btn-primary");
+            $("#follow_control").addClass("btn-default")
+        } else {
+            $("#follow_control").removeClass("btn-default");
+            $("#follow_control").addClass("btn-primary")
+        }
+    }
+
+    function buttonHover() {
+        if ($("#follow_status").val() == "已关注") {
+            $("#follow_control").removeClass("btn-primary");
+            $("#follow_control").addClass("btn-default")
+            $("#follow_control").text("取关他");
+        } else {
+            $("#follow_control").removeClass("btn-default");
+            $("#follow_control").addClass("btn-primary")
+            $("#follow_control").text("关注他");
+        }
+    }
+
+    function emptyWrapper() {
+        $("#follower_wrapper").empty();
+        $("#following_wrapper").empty();
+        $("#reply_wrapper").empty();
         $("#question_wrapper").empty();
-        $("#question_trigger").removeClass("active");
+
+    }
+
+    function setPersonalFollower() {
+        var url = "/profile/follower/" + $("#profile_id").val();
+        emptyWrapper();
+        $(".list-group-item").removeClass("active");
+        $("#follower_trigger").addClass("active");
+        $.ajax({
+            type: "GET",
+            url: url,
+            beforeSend: function () {
+                loadingIndex = layer.msg('加载列表中', {icon: 16});
+            },
+            success: function (resp) {
+                layer.close(loadingIndex);
+                load_follower_list(resp);
+                build_page_nav(resp);
+            }
+        });
+    }
+
+    function setPersonalFollowing() {
+        var url = "/profile/following/" + $("#profile_id").val();
+        emptyWrapper();
+        $(".list-group-item").removeClass("active");
+        $("#following_trigger").addClass("active");
+        $.ajax({
+            type: "GET",
+            url: url,
+            beforeSend: function () {
+                loadingIndex = layer.msg('加载列表中', {icon: 16});
+            },
+            success: function (resp) {
+                layer.close(loadingIndex);
+                load_following_list(resp);
+                build_page_nav(resp);
+            }
+        });
+    }
+
+    function setPersonalReply() {
+        var url = "/profile/replies/" + $("#profile_id").val();
+        emptyWrapper();
+        $(".list-group-item").removeClass("active");
         $("#reply_trigger").addClass("active");
         $.ajax({
             type: "GET",
@@ -70,10 +240,11 @@
             }
         });
     }
+
     function setPersonalQuestion() {
-        var url = "/profile/questions";
-        $("#reply_wrapper").empty();
-        $("#reply_trigger").removeClass("active");
+        var url = "/profile/questions/" + $("#profile_id").val();
+        emptyWrapper();
+        $(".list-group-item").removeClass("active");
         $("#question_trigger").addClass("active");
         $.ajax({
             type: "GET",
@@ -90,25 +261,25 @@
     }
 
     function load_question_list(resp) {
-        $("#question_wrapper").empty();
+        emptyWrapper();
         var questionList = resp.data.itemList.list;
         $.each(questionList, function (index, item) {
             var question = $('<div class="media" style="margin-left: 20px">' +
                 '                <div class="media-left">' +
                 '                    <a href="#">' +
-                '                        <img class="media-object img-rounded" src="'+ item.user.avatarUrl + '" alt="....">' +
+                '                        <img class="media-object img-rounded" src="' + item.user.avatarUrl + '" alt="....">' +
                 '                    </a>' +
                 '                </div>' +
                 '                <div class="media-body">' +
                 '                    <h4 class="media-heading" style="color: #2860AC">' +
-                '                        <a href="/question/' + item.id + '">'+ item.title +'</a>' +
+                '                        <a href="/question/' + item.id + '">' + item.title + '</a>' +
                 '                    </h4>' +
                 '                    <span class="text-desc">' +
                 '                        <span >' + item.commentCount +
                 '                        </span> 个评论 •' +
                 '                        <span>' + item.viewCount +
                 '                        </span> 次浏览 • ' +
-                '                        <span>发布于' + item.timeCreate +'</span>' +
+                '                        <span>发布于' + item.timeCreate + '</span>' +
                 '                    </span>' +
                 '                </div>' +
                 '            </div>');
@@ -119,21 +290,45 @@
 
     function load_reply_list(resp) {
         var replyList = resp.data.itemList.list;
-        $("#reply_wrapper").empty();
+        emptyWrapper();
         $.each(replyList, function (index, item) {
-            var typename = item.type == 1 ? '回复了问题':'回复了评论';
-            var read = item.state == 1 ? '已读': '未读';
-            var spanSytle = item.state == 1 ? 'info':'danger';
+            var typename = item.type == 1 ? '回复了问题' : '回复了评论';
+            var read = item.state == 1 ? '已读' : '未读';
+            var spanSytle = item.state == 1 ? 'info' : 'danger';
             var reply = $('          <div class="media" >' +
                 '                        <p class="media-body">' +
-                '                            <a href="#">' + item.notifierName +'</a>' +
+                '                            <a href="#">' + item.notifierName + '</a>' +
                 '                            <span>' + typename + '</span>' +
-                '                            <a href="/notification/' + item.id +'">'+ item.outerTitle + '</a>' +
+                '                            <a href="/notification/' + item.id + '">' + item.outerTitle + '</a>' +
                 '                            <span class="label label-' + spanSytle + '">' + read + '</span>' +
                 '                        </p>' +
                 '                    </span>' +
                 '                    </div>');
             reply.appendTo("#reply_wrapper");
+        })
+    }
+
+    function load_follower_list(resp) {
+        var followerList = resp.data.itemList.list;
+        emptyWrapper();
+        $.each(followerList, function (index, item) {
+            var follower = $('<div class="follower_list">\n' + '<a href="/profiles/?param=question&id=' + item.id + '">'
+                +  '<img src="' + item.avatarUrl + '" style="width: 40px; height: 40px">\n' + item.name + '</a>\n' +
+                '</div>');
+
+            follower.appendTo("#follower_wrapper");
+        })
+    }
+
+    function load_following_list(resp) {
+        var followerList = resp.data.itemList.list;
+        emptyWrapper();
+        $.each(followerList, function (index, item) {
+            var follower = $('<div class="following_list">\n' + '<a href="/profiles/?param=question&id=' + item.id + '">'
+                +  '<img src="' + item.avatarUrl + '" style="width: 40px; height: 40px">\n' + item.name + '</a>\n' +
+                '</div>');
+
+            follower.appendTo("#follower_wrapper");
         })
     }
 
@@ -193,7 +388,7 @@
     }
 
 
-    var setPage = function(page) {
+    var setPage = function (page) {
         var url = "/profile/questions";
         var req = {
             "page": page,

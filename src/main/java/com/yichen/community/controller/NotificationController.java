@@ -15,8 +15,12 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class NotificationController {
 
-    @Autowired
     NotificationService notificationService;
+
+    @Autowired
+    public void setNotificationService(NotificationService notificationService) {
+        this.notificationService = notificationService;
+    }
 
     @GetMapping("/notification/{id}")
     public String profile(@PathVariable(name = "id") Long id, HttpServletRequest request) {

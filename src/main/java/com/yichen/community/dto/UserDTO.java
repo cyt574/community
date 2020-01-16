@@ -17,4 +17,6 @@ public class UserDTO {
     private String phone;
     @Pattern(regexp = RegexpUtils.EMAIL, message = "邮箱格式不正确")
     private String email;
+
+    private String avatarUrl;
 }

@@ -322,3 +322,52 @@ li > a {
     background: linear-gradient(#1fd783, #1fd06b);
     border: transparent 1px;
 }
+
+.profile_page {
+    text-align: center;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    padding: 15px;
+}
+
+.profile_detail div {
+    display: inline;
+}
+
+.profile_name{
+    text-align: center;
+}
+
+.profile_detail {
+    font-size: 14px;
+    text-align: center;
+}
+
+div strong {
+    display: inline-block;
+}
+
+
+.profile_detail a {
+    font-size: 20px;
+    text-decoration: none;
+}
+
+.profile_name {
+    font-size: 24px;
+}
+
+.following_list{
+    display: inline-block;
+    margin-top: 10px;
+    margin-right: 10px;
+}
+
+.follower_list{
+    display: inline-block;
+    margin-top: 10px;
+    margin-right: 10px;
+}
+
+.profile_operate {
+    text-align: center;
+}

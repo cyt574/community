@@ -38,7 +38,6 @@ public class CustomizeExceptionHandler {
         return null;
     }
 
-
     @ExceptionHandler(Exception.class)
     ModelAndView handle(HttpServletRequest request, HttpServletResponse httpServletResponse, Throwable ex, Model model) {
         String contentType = request.getContentType();
@@ -47,7 +46,7 @@ public class CustomizeExceptionHandler {
             if (ex instanceof CustomizeException) {
                 resultDTO = ResultDTO.errorOf((CustomizeException) ex);
             } else {
-                resultDTO =  ResultDTO.errorOf(CustomizeErrorCode.SYS_ERROR);
+                resultDTO = ResultDTO.errorOf(CustomizeErrorCode.SYS_ERROR);
             }
 
             try {
@@ -61,7 +60,6 @@ public class CustomizeExceptionHandler {
 
             }
             return null;
-
         } else {
             if (ex instanceof CustomizeException) {
                 model.addAttribute("message", ex.getMessage());

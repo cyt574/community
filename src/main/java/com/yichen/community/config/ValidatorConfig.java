@@ -12,7 +12,7 @@ import javax.validation.Validator;
 public class ValidatorConfig {
 
     @Bean
-    public Validator getValidator() {
+    public Validator validator() {
         return new LocalValidatorFactoryBean();
     }
 

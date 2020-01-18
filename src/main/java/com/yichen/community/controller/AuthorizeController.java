@@ -146,7 +146,7 @@ public class AuthorizeController {
             //登录成功，写cookie和session
             response.addCookie(new Cookie("token", user.getToken()));
             request.getSession().setAttribute("user", user);
-            return ResultDTO.okOf();
+            return ResultDTO.okOf("登录成功，正在跳转...");
         } else {
             token.clear();
             return ResultDTO.errorOf(2100, "登录失败！");

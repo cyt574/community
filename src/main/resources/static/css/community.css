@@ -2,9 +2,9 @@
 @media screen and (max-width: 960px) {
     .main {
         margin: 15px 15px 15px 15px;
-        background-color: white;
         border-radius: 5px;
-        padding-bottom: 15px
+        padding-bottom: 15px;
+        background: white;
     }
 }
 
@@ -12,25 +12,24 @@
 @media screen and (min-width: 960px) and (max-width: 1366px) {
     .main {
         margin: 15px 30px 30px 30px;
-        background-color: white;
         border-radius: 5px;
-        padding-bottom: 15px
+        padding-bottom: 15px;
+        background: white;
     }
 }
 
 /*当浏览器尺寸大于960px时候的代码：*/
 @media screen and (min-width: 1366px) {
     .main {
-        margin: 15px 360px 30px 360px;
-        background-color: white;
+        margin: 15px 180px 30px 180px;
         border-radius: 5px;
-        padding-bottom: 15px
+        padding-bottom: 15px;
+        background: white;
     }
 }
 
 body {
-    background-color: #efefef;
-    background: url(../images/bg.jpg) repeat;
+    background: #efefef url(../images/bg.jpg) repeat;
     font-family: candara, "Helvetica Neue", Helvetica, Arial, "PingFang SC", "Hiragino Sans GB", "WenQuanYi Micro Hei", "Microsoft Yahei", sans-serif, -apple-system;
 }
 
@@ -38,30 +37,8 @@ hr {
     margin: 15px;
 }
 
-h4 {
-
-}
-
 h3 span {
     font-family: Roboto, Arial, sans-serif;
-}
-
-#bg-iframe {
-    width: 100%;
-    height: 100%;
-    z-index: -10;
-    position: fixed;
-    top: 0;
-    left: 0;
-    /* float: left; */
-    border: 0;
-    /* overflow: hidden; */
-}
-
-.nav-title {
-    min-height: 63px;
-    position: relative;
-    padding: 30px 20px 0;
 }
 
 li > a {
@@ -69,8 +46,12 @@ li > a {
     cursor: pointer;
 }
 
-#question_wrapper {
+#question-wrapper {
     margin-top: 15px;
+}
+
+#question-wrapper a {
+    text-decoration: none;
 }
 
 .hot-nav-title li {
@@ -82,10 +63,6 @@ li > a {
 }
 
 .select-nav-title {
-    margin: 0;
-    top: 20px;
-    left: 20px;
-    position: absolute;
 }
 
 .select-nav-title span {
@@ -94,10 +71,6 @@ li > a {
 
 .nav-title li {
     float: right;
-}
-
-.navbar-customize {
-
 }
 
 .footer {
@@ -282,33 +255,17 @@ li > a {
     margin-top: 15px;
 }
 
-.secondary-comment-reply button {
-
-}
-
 .secondary-comment-reply input {
     display: inline-block;
     width: 90%;
 }
 
-
-#div-modal {
-    position: absolute;
-    width: auto;
-    height: auto;
-    left: 50%;
-}
-
-#register_form ul li input {
+#register-form ul li input {
     height: 40px;
     margin-bottom: 10px;
 }
 
-#register_form div {
-    width: 30%;
-}
-
-#register_form ul li button {
+#register-form ul li button {
     border-radius: 3px;
     float: right;
     height: 35px;
@@ -323,51 +280,98 @@ li > a {
     border: transparent 1px;
 }
 
-.profile_page {
+.profile-outline {
     text-align: center;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     padding: 15px;
+    background: white;
+    margin-left: 10px;
+    min-height: 480px;
 }
 
-.profile_detail div {
+.main-outline {
+    background: white;
+    min-height: 480px;
+}
+
+.profile-avatar {
+    height: 160px;
+    width: 160px;
+}
+
+.profile-detail-list {
+    background: white;
+    padding: 15px;
+    min-height: 480px;
+}
+
+.main-detail-list {
+    background: white;
+    padding: 15px;
+    min-height: 480px;
+}
+
+.profile-detail a {
     display: inline;
+    cursor: pointer;
 }
 
-.profile_name{
+.profile-name {
     text-align: center;
 }
 
-.profile_detail {
+.profile-detail {
     font-size: 14px;
     text-align: center;
+    padding: 15px 0;
 }
 
-div strong {
-    display: inline-block;
-}
-
-
-.profile_detail a {
+.profile-detail a {
     font-size: 20px;
     text-decoration: none;
 }
 
-.profile_name {
+.profile-name {
     font-size: 24px;
 }
 
-.following_list{
+.following-list {
     display: inline-block;
     margin-top: 10px;
     margin-right: 10px;
 }
 
-.follower_list{
+.follower-list {
     display: inline-block;
     margin-top: 10px;
     margin-right: 10px;
 }
 
-.profile_operate {
+.profile-operate {
     text-align: center;
+    padding: 20px 0;
+    border-top: 1px solid #f6f6f6;
+    border-bottom: 1px solid #f6f6f6;
+}
+
+.profile-operate a {
+    font-size: 20px;
+    text-decoration: none;
+}
+
+.number-board {
+    display: flex;
+}
+
+.number-board-item {
+    flex: 1 1;
+}
+
+.number-board-last {
+    border-left: 1px solid #f6f6f6;
+}
+
+.editor-main {
+    margin: 15px;
+    background: white;
 }

@@ -32,7 +32,7 @@ var App = function () {
 
 
     var loadQuestionList = function(resp) {
-        $("#question_wrapper").empty();
+        $("#question-wrapper").empty();
         var questionList = resp.data.list;
         $.each(questionList, function (index, item) {
             var question = $('<div class="media" style="margin-left: 20px">' +
@@ -55,12 +55,11 @@ var App = function () {
                 '                </div>' +
                 '            </div>');
 
-            question.appendTo("#question_wrapper");
+            question.appendTo("#question-wrapper");
         })
     }
 
     var setPage = function(page) {
-        // var args = $("#main_form").serialize();
         var req = {
             "page": page,
             "size": 15,
@@ -80,7 +79,7 @@ var App = function () {
                 layer.close(loadingIndex);
                 if (resp.code == 200) {
                     loadQuestionList(resp);
-                    build_page_nav(resp);
+                    buildPageNav(resp);
                     $("html,body").animate({scrollTop: 0}, 1);//回到顶端
                 } else {
                     layer.msg(data.extend.msg, {time: 2000, icon: 5, shift: 6}, function () {
@@ -91,15 +90,15 @@ var App = function () {
     }
 
     //构建分页导航
-    var build_page_nav = function(resp) {
+    var buildPageNav = function(resp) {
         var page = resp.data;
         //设置当前页
         currentpage = page.pageNum;
         //设置末页
         totalpageo = page.pageSize;
-        $('.page_info-area').empty();
+        $('.page-info-area').empty();
         $(".pagination").empty();
-        $('.page_info-area').append("当前第" + page.pageNum + "页,共" + page.pages + "页,共" + page.total + "条记录")
+        $('.page-info-area').append("当前第" + page.pageNum + "页,共" + page.pages + "页,共" + page.total + "条记录")
         //分页导航
         var nav = $(".pagination");
         var firstLi = $("<li></li>").append($("<a>首页</a>").attr("href", "#"));
@@ -153,17 +152,17 @@ var App = function () {
             setPage(1);
         });
 
-        $("#btnRegister").bind("click",function () {
-            $("#login_page").hide();
+        $("#btn-register").bind("click",function () {
+            $("#login-page").hide();
             $("#register_page").show();
         });
 
-        function login_popup() {
-            $("#loginModal").modal("show")
+        function loginPopup() {
+            $("#login-modal").modal("show")
             $("#register_page").hide();
-            $("#login_page").show();
+            $("#login-page").show();
         }
-        $(".globalLoginBtn").on("click", login_popup),function() {
+        $(".globalLoginBtn").on("click", loginPopup),function() {
             var e = [];
             $(".modal").on("show.bs.modal",
                 function() {
@@ -181,10 +180,10 @@ var App = function () {
 
     var register = function () {
         let data = {
-            "username": $("#id_register_username").val(),
-            "password": $("#id_register_password").val(),
-            "email": $("#id_account_email").val(),
-            "phone": $("#id_account_phone").val()
+            "username": $("#id-register-username").val(),
+            "password": $("#id-register-password").val(),
+            "email": $("#id-account-email").val(),
+            "phone": $("#id-account-phone").val()
         }
         $.ajax({
             url: "register",
@@ -208,8 +207,8 @@ var App = function () {
 
     var login = function() {
         var data = {
-            "username": $("#id_account_username").val(),
-            "password": $("#id_account_password").val()
+            "username": $("#id-account-username").val(),
+            "password": $("#id-account-password").val()
         }
         $.ajax({
             url: "/login",

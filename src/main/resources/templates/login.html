@@ -1,46 +1,55 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="login">
-    <div class="col-left"><img src="/images/login-left-image.png"></div>
-    <div class="col-right">
+    <div class="login-form-div">
         <div class="modal-header">
-            <button type="button" id="login_close" class="close" data-dismiss="modal"><span
-                    aria-hidden="true">×</span><span class="sr-only">Close</span></button>
-            <h4 class="modal-title" id="loginModalLabel" style="font-size: 18px;">登录</h4>
+            <button type="button" id="login-close" class="close" data-dismiss="modal">
+                <span aria-hidden="true" style="font-size: 30px">×</span>
+                <span class="sr-only">Close</span>
+            </button>
+            <h4 class="modal-title" style="font-size: 18px;">登录</h4>
         </div>
         <div class="modal-body">
-            <section class="box-login v5-input-txt" id="box-login">
-                <form id="login_form" autocomplete="off">
-                    <ul>
-                        <li class="form-group"><input class="form-control" id="id_account_username"
-                                                      maxlength="50"
-                                                      name="username" placeholder="请输入用户昵称"
-                                                      type="text"></li>
-                        <li class="form-group"><input class="form-control" id="id_account_password"
-                                                      name="password" placeholder="请输入密码" type="password">
-                        </li>
-                    </ul>
-                    <p class="good-tips marginB10">
-                        <!--<a id="btnForgetpsw" class="fr">忘记密码？</a>-->
-                        还没有账号？
-                        <a target="_blank" id="btnRegister">立即注册</a>
-                        <a target="_blank" id="btnEmailLogin">邮箱登录</a>
-                    </p>
-                    <div class="login-box marginB10">
-                        <button id="login_btn" type="button" class="btn btn-micv5 btn-block globalLogin" onclick="App.login()">登录
-                        </button>
-                        <div id="login-form-tips" style="display: none; color: red;">错误提示
-                        </div>
+            <form id="login-form" autocomplete="off" class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="id-account-username">用户名</label>
+                    <div class="col-sm-9">
+                        <input class="form-control" id="id-account-username" maxlength="50" name="username"
+                               placeholder="请输入用户昵称" type="text">
                     </div>
-                    <div class="threeLogin">
-                        <span>其他方式登录</span>
-                        <a class="ngithub" th:href="@{https://github.com/login/oauth/authorize(client_id='878c456ceffbbaed24fe',redirect_uri='http://localhost:8087/callback',scope='user',state=1)}"></a>
-                        <!--<a class="nwx" href="javascript:;"></a>-->
-                        <!--<a class="nwb"></a>-->
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="id-account-password">密码</label>
+                    <div class="col-sm-9">
+                        <input class="form-control" id="id-account-password" name="password" placeholder="请输入密码"
+                               type="password">
                     </div>
-                </form>
+                </div>
+                <div id="login-form-tips" style="display: none; color: red;">
+                    <div class="col-sm-offset-2 col-sm-9">
+                        错误提示
+                    </div>
+                </div>
 
-            </section>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-9">
+                        <span class="login-tips">
+                            <a id="btn-register">立即注册</a>
+                            <span style="margin-left: 8px">其他方式登录</span>
+                            <a class="github" style="margin-left: 8px"
+                            th:href="@{https://github.com/login/oauth/authorize(client_id='878c456ceffbbaed24fe',redirect_uri='http://localhost:8087/callback',scope='user',state=1)}">
+                                <img src="img/github.png" alt="Github" style="width: 24px; height: 24px">
+                            </a>
+
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-9">
+                        <button class="btn btn-default" id="btn-login" type="button" onclick="App.login()">登录</button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 </div>

@@ -65,14 +65,25 @@ public class ProfileController {
         } else if (param.equals("following")) {
             model.addAttribute("sectionParam", param);
         }
-        UserProfileDTO userProfileDTO = null;
-        User user = (User) request.getSession().getAttribute("user");
 
-        if (id != null) {
-            userProfileDTO = userService.getUserProfileById(id);
-        } else {
-            userProfileDTO = userService.getUserProfileById(user.getId());
+        // 用户未登录退出用户中心，返回首页
+        User user = (User) request.getSession().getAttribute("user");
+        if (user == null) {
+            return "index";
         }
+
+        UserProfileDTO userProfileDTO = null;
+        if (id == null) {
+            userProfileDTO = userService.getUserProfileById(user.getId());
+        } else {
+            userProfileDTO = userService.getUserProfileById(id);
+        }
+
+        // 无信息，返回首页
+        if (userProfileDTO == null) {
+            return "index";
+        }
+
         String followStatus = userService.getFollowStatus(id, user.getId()) == 1 ? "已关注" : "关注他";
         model.addAttribute("followStatus", followStatus);
         model.addAttribute("userProfile", userProfileDTO);
@@ -116,15 +127,6 @@ public class ProfileController {
 
         return ResultDTO.okOf(map);
     }
-
-
-    @GetMapping("/profile")
-    public String profileId(@PathVariable(value = "id") Long id, HttpServletRequest request, Model model) {
-        UserProfileDTO userProfileDTO = userService.getUserProfileById(id);
-        model.addAttribute("userProfile", userProfileDTO);
-        return "profile";
-    }
-
 
     @GetMapping("/profile/follow")
     @ResponseBody
@@ -178,9 +180,9 @@ public class ProfileController {
         }
     }
 
-    @GetMapping("/profile/safty")
-    public String profileSafty() {
-        return "safty";
+    @GetMapping("/profile/safety")
+    public String profileSafety() {
+        return "safety";
     }
 
 

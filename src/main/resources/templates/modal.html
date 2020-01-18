@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="modal" class="modal-popup">
-    <div class="modal fade" id="loginModal" style="display:none;">
-        <div class="modal-dialog modal-sm" style="width:540px;">
+    <div class="modal fade" id="login-modal" style="display:none;">
+        <div class="modal-dialog">
             <div class="modal-content" style="border:none;">
-                <div th:insert="~{login :: login}" id="login_page"></div>
+                <div th:insert="~{login :: login}" id="login-page"></div>
                 <div th:insert="~{register :: register}" id="register_page" style="display: none"></div>
             </div>
         </div>

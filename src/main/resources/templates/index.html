@@ -5,7 +5,7 @@
 </head>
 <script type="application/javascript">
     window.onload = function () {
-        var closable = window.localStorage.getItem("closable");
+        const closable = window.localStorage.getItem("closable");
         if (closable == "true") {
             window.localStorage.removeItem("closable");
             window.close();
@@ -16,7 +16,7 @@
 <div th:insert="~{navigation :: nav}"></div>
 <div class="container-fluid main">
     <div class="row">
-        <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
+        <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12 main-detail-list">
             <div>
                 <ul class="nav nav-tabs nav-title" role="tablist" id="primary-tab">
                     <h3 class="select-nav-title">
@@ -33,15 +33,15 @@
             </div>
 
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <div id="question_wrapper"></div>
+                <div id="question-wrapper"></div>
             </div>
-            <span class="page_info-area" style="font-size: 12px;"></span>
+            <span class="page-info-area" style="font-size: 12px;"></span>
             <nav aria-label="Page navigation" style="margin-left: 20px">
                 <ul class="pagination">
                 </ul>
             </nav>
         </div>
-        <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+        <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12 main-outline">
             <h3 style="margin-top: 30px">热门话题</h3>
             <div id="tag-list">
             </div>
@@ -62,7 +62,7 @@
     </div>
 </div>
 
-<form id="main_form">
+<form id="main-form">
     <input type="hidden" name="page" id="pageParam" th:value="${page}">
     <input type="hidden" name="size" id="sizeParam" th:value="${size}">
     <input type="hidden" name="order" id="orderParam" th:value="${order}">

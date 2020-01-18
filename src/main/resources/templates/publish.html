@@ -8,9 +8,9 @@
 <script th:src="@{/js/editormd.min.js}" type="application/javascript"></script>
 
 <div th:insert="~{navigation :: nav}"></div>
-<div class="container-fluid main">
+<div class="container-fluid editor-main">
     <div class="row">
-        <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
+        <div class="col-lg-10 col-md-12 col-sm-12 col-xs-12 main-detail-list">
             <h2><span class="glyphicon glyphicon-plus" aria-hidden="true"></span>发起</h2>
             <hr/>
             <form id="publish_form">
@@ -90,7 +90,7 @@
                 </div>
             </form>
         </div>
-        <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12" style="color: #00c4ff">
+        <div class="col-lg-2 col-md-12 col-sm-12 col-xs-12 main-outline">
             <h3>发起问题指南</h3> <br/>
             *问题标题：请用精简的语言描述你发布的问题，不超过25字 <br/> <br/>
             *问题补充：详细补充您的问题内容，并确保问题描述清晰直观，并提供一些相关的资料 <br/> <br/>
@@ -101,8 +101,8 @@
 <div th:insert="~{footer :: foot}"></div>
 <script type="application/javascript">
     $(function () {
-        $("#btnRegister").bind("click",function () {
-            $("#login_page").hide();
+        $("#btn-register").bind("click",function () {
+            $("#login-page").hide();
             $("#register_page").show();
         });
     });
@@ -136,7 +136,7 @@
 
 
     function login_popup() {
-        $("#loginModal").modal("show")
+        $("#login-modal").modal("show")
     }
     $(".globalLoginBtn").on("click", login_popup),function() {
         var e = [];

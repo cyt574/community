@@ -25,7 +25,7 @@
                 </nav>
             </div>
         </div>
-        <div class="col-lg-2 col-md-12 col-sm-12 col-xs-12 profile-outline">
+        <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12 profile-outline">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <img th:src="${userProfile.avatarUrl}" class="profile-avatar">
                 <div class="profile-name">
@@ -34,25 +34,22 @@
             </div>
 
             <div class="profile-detail">
-                <span type="button">
-                    <span>关注者</span>
-                    <strong th:text="${userProfile.follower}"></strong>
+                <span>关注者<strong th:text="${userProfile.follower}"></strong>
                 </span>
-                <span type="button">
-                    <span>关注了</span>
-                    <strong th:text="${userProfile.following}"></strong>
+                <span>关注了<strong th:text="${userProfile.following}"></strong>
                 </span>
             </div>
 
-            <div class="profile-operate">
+            <div class="profile-follow">
                 <div th:if="${session.user.id != userProfile.id}">
-                    <a id="follow-control" onmouseover="buttonHover()" onmouseout="buttonOut()"
-                       onclick="handleFollowControl()" role="button" th:text="${followStatus}"></a>
-                    <a class="btn btn-default" href="#" role="button">发私信</a>
+                    <a class="number-board-item" type="button"  id="follow-control" onmouseover="followHover()" onmouseout="followOut()"
+                       onclick="handleFollowControl()" th:text="${followStatus}">
+                    </a>
+                    <a class="number-board-item number-board-last" type="button" >发私信</a>
                 </div>
                 <div th:if="${session.user.id == userProfile.id}" class="number-board">
                     <a class="number-board-item" type="button" href="/profile/detail">
-                        <div>编辑资料</div>
+                        编辑资料
                     </a>
                     <a class="number-board-item number-board-last" type="button" href="/profile/safety">
                         <div>安全中心</div>
@@ -61,17 +58,17 @@
             </div>
 
             <div class="list-group section">
-                <a href="#" onclick="setPersonalQuestion()" id="question_trigger" class="list-group-item">我的问题
+                <a href="#" onclick="setPersonalQuestion()" id="question-trigger" class="list-group-item">我的问题
                     <span class="badge" th:text="${userProfile.question}"></span>
                 </a>
                 <a href="#" onclick="setPersonalReply()" id="reply_trigger" class="list-group-item"
                    th:if="${session.user.id == userProfile.id}">最新回复
                     <span class="badge" th:text="${session.unreadCount}">0</span>
                 </a>
-                <a href="#" onclick="setPersonalFollower()" id="follower_trigger" class="list-group-item">我的粉丝
+                <a href="#" onclick="setPersonalFollower()" id="follower-trigger" class="list-group-item">我的粉丝
                     <span class="badge" th:text="${userProfile.follower}">0</span>
                 </a>
-                <a href="#" onclick="setPersonalFollowing()" id="following_trigger" class="list-group-item">我的关注
+                <a href="#" onclick="setPersonalFollowing()" id="following-trigger" class="list-group-item">我的关注
                     <span class="badge" th:text="${userProfile.following}">0</span>
                 </a>
             </div>
@@ -89,9 +86,9 @@
 <script>
     $(function () {
         if ($("#follow-status").val() == "关注他") {
-            $("#follow-control").addClass("btn btn-default")
+            $("#follow-control").addClass("active")
         } else {
-            $("#follow-control").addClass("btn btn-primary")
+            $("#follow-control").removeClass("active")
         }
 
         var model = $("#param").val();
@@ -102,9 +99,9 @@
         }
 
         if ($("#user-id").val() != $("#profile-id").val()) {
-            document.getElementById("question_trigger").childNodes[0].nodeValue = "他的问题"
-            document.getElementById("follower_trigger").childNodes[0].nodeValue = "他的粉丝";
-            document.getElementById("following_trigger").childNodes[0].nodeValue = "他的关注";
+            document.getElementById("question-trigger").childNodes[0].nodeValue = "他的问题"
+            document.getElementById("follower-trigger").childNodes[0].nodeValue = "他的粉丝";
+            document.getElementById("following-trigger").childNodes[0].nodeValue = "他的关注";
         }
     });
 
@@ -118,12 +115,12 @@
             success: function (resp) {
                 if (resp.code == 200) {
                     // window.location.reload();
+                    $("#follow-status").val(resp.data)
                     if (resp.data == "关注他") {
                         $("#follow-control").addClass("btn btn-default")
                     } else {
                         $("#follow-control").addClass("btn btn-primary")
                     }
-                    $("#follow-status").val(resp.data)
                 } else {
                     // swal(resp.data);
                 }
@@ -131,26 +128,18 @@
         })
     }
 
-    function buttonOut() {
-        $("#follow-control").text($("#follow-status").val());
-
-        if ($("#follow-status").val() == "关注他") {
-            $("#follow-control").removeClass("btn-primary");
-            $("#follow-control").addClass("btn-default")
+    function followOut() {
+        if ($("#follow-status").val() === "关注他") {
+            $("#follow-control").text("关注他");
         } else {
-            $("#follow-control").removeClass("btn-default");
-            $("#follow-control").addClass("btn-primary")
+            $("#follow-control").text("取关他");
         }
     }
 
-    function buttonHover() {
-        if ($("#follow-status").val() == "已关注") {
-            $("#follow-control").removeClass("btn-primary");
-            $("#follow-control").addClass("btn-default")
+    function followHover() {
+        if ($("#follow-status").val() === "已关注") {
             $("#follow-control").text("取关他");
         } else {
-            $("#follow-control").removeClass("btn-default");
-            $("#follow-control").addClass("btn-primary")
             $("#follow-control").text("关注他");
         }
     }
@@ -167,7 +156,7 @@
         var url = "/profile/follower/" + $("#profile-id").val();
         emptyWrapper();
         $(".list-group-item").removeClass("active");
-        $("#follower_trigger").addClass("active");
+        $("#follower-trigger").addClass("active");
         $.ajax({
             type: "GET",
             url: url,
@@ -186,7 +175,7 @@
         var url = "/profile/following/" + $("#profile-id").val();
         emptyWrapper();
         $(".list-group-item").removeClass("active");
-        $("#following_trigger").addClass("active");
+        $("#following-trigger").addClass("active");
         $.ajax({
             type: "GET",
             url: url,
@@ -224,7 +213,7 @@
         var url = "/profile/questions/" + $("#profile-id").val();
         emptyWrapper();
         $(".list-group-item").removeClass("active");
-        $("#question_trigger").addClass("active");
+        $("#question-trigger").addClass("active");
         $.ajax({
             type: "GET",
             url: url,

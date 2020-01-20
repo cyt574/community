@@ -103,7 +103,7 @@
     $(function () {
         $("#btn-register").bind("click",function () {
             $("#login-page").hide();
-            $("#register_page").show();
+            $("#register-page").show();
         });
     });
 
@@ -135,10 +135,10 @@
     }
 
 
-    function login_popup() {
+    function loginPopup() {
         $("#login-modal").modal("show")
     }
-    $(".globalLoginBtn").on("click", login_popup),function() {
+    $(".globalLoginBtn").on("click", loginPopup),function() {
         var e = [];
         $(".modal").on("show.bs.modal",
             function() {

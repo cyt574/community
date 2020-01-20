@@ -1,4 +1,4 @@
-package com.yichen.community.provider;
+package com.yichen.community.utils.provider;
 
 import com.alibaba.fastjson.JSON;
 import com.yichen.community.dto.AccessTokenDTO;

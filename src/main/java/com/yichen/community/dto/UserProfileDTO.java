@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yichen.community.model.User;
 import com.yichen.community.utils.RegexpUtils;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 

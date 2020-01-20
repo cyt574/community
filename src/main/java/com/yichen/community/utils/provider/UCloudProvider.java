@@ -1,4 +1,4 @@
-package com.yichen.community.provider;
+package com.yichen.community.utils.provider;
 
 import cn.ucloud.ufile.UfileClient;
 import cn.ucloud.ufile.api.object.ObjectConfig;

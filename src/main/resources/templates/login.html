@@ -25,9 +25,12 @@
                                type="password">
                     </div>
                 </div>
-                <div id="login-form-tips" style="display: none; color: red;">
-                    <div class="col-sm-offset-2 col-sm-9">
-                        错误提示
+                <div class="form-group" id="login-form-tips" style="display: none">
+                    <label class="col-sm-2 control-label">
+                        提示信息
+                    </label>
+                    <div class="col-sm-9">
+                        <div id="login-form-content"></div>
                     </div>
                 </div>
 
@@ -40,7 +43,6 @@
                             th:href="@{https://github.com/login/oauth/authorize(client_id='878c456ceffbbaed24fe',redirect_uri='http://localhost:8087/callback',scope='user',state=1)}">
                                 <img src="img/github.png" alt="Github" style="width: 24px; height: 24px">
                             </a>
-
                         </span>
                     </div>
                 </div>

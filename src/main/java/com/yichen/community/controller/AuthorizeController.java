@@ -1,12 +1,12 @@
 package com.yichen.community.controller;
 
-import com.yichen.community.validator.BeanValidator;
+import com.yichen.community.utils.validator.BeanValidator;
 import com.yichen.community.dto.AccessTokenDTO;
 import com.yichen.community.dto.GithubUser;
 import com.yichen.community.dto.ResultDTO;
 import com.yichen.community.dto.UserDTO;
 import com.yichen.community.model.User;
-import com.yichen.community.provider.GithubProvider;
+import com.yichen.community.utils.provider.GithubProvider;
 import com.yichen.community.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
@@ -16,17 +16,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Validator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import static com.yichen.community.validator.BeanValidator.validator;
 
 @Controller
 public class AuthorizeController {

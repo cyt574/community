@@ -18,8 +18,12 @@ import java.io.IOException;
 @Controller
 public class KaptchaController {
 
+    private final Producer captchaProducer;
+
     @Autowired
-    private Producer captchaProducer;
+    public KaptchaController(Producer captchaProducer) {
+        this.captchaProducer = captchaProducer;
+    }
 
     @RequestMapping(value = "/verification", method = RequestMethod.GET)
     public ModelAndView verification(HttpServletRequest request, HttpServletResponse response) throws IOException {

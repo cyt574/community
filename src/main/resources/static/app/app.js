@@ -1,56 +1,55 @@
-var App = function () {
+const App = function () {
 
-    var setTagParam = function (e) {
-        $("#tagParam").attr("value", e.getAttribute("data-tag"));
+    const setTagParam = (element) => {
+        $("#tagParam").attr("value", element.getAttribute("data-tag"));
         $("#main-title").html($("#tagParam").val());
     };
 
-    var buildTagsList = function(resp){
+    const buildTagsList = (resp) => {
         $("#tag-list").empty();
-        var tags = resp.data;
-        $.each(tags, function (index, item) {
-            var tag = '    <span class="tag-item-box-index">' +
-                '            <a data-tag="'+ item + '"onclick="App.initTag(this)">' + item + '</a>' +
+        const tags = resp.data;
+        $.each(tags, (index, item) => {
+            let tag = '    <span class="tag-item-box-index">' +
+                '            <a data-tag="' + item + '"onclick="App.initTag(this)">' + item + '</a>' +
                 '            </span>';
-            var tagList = $("#tag-list");
+            let tagList = $("#tag-list");
             tagList.append(tag);
         })
     };
 
-    var loadTagsList = function() {
+    const loadTagsList = () => {
         var url = "/getTagList";
         $.ajax({
             type: "GET",
             url: url,
             success: function (resp) {
-                if(resp.code = 200) {
+                if (resp.code = 200) {
                     buildTagsList(resp);
                 }
             }
         })
     };
 
-
-    var loadQuestionList = function(resp) {
+    const loadQuestionList = (resp) => {
         $("#question-wrapper").empty();
         var questionList = resp.data.list;
-        $.each(questionList, function (index, item) {
+        $.each(questionList, (index, item) => {
             var question = $('<div class="media" style="margin-left: 20px">' +
                 '                <div class="media-left">' +
                 '                    <a href="#">' +
-                '                        <img class="media-object img-rounded" src="'+ item.user.avatarUrl + '" alt="....">' +
+                '                        <img class="media-object img-rounded" src="' + item.user.avatarUrl + '" alt="....">' +
                 '                    </a>' +
                 '                </div>' +
                 '                <div class="media-body">' +
                 '                    <h4 class="media-heading" style="color: #2860AC">' +
-                '                        <a href="/question/' + item.id + '">'+ item.title +'</a>' +
+                '                        <a href="/question/' + item.id + '">' + item.title + '</a>' +
                 '                    </h4>' +
                 '                    <span class="text-desc">' +
                 '                        <span >' + item.commentCount +
                 '                        </span> 个评论 •' +
                 '                        <span>' + item.viewCount +
                 '                        </span> 次浏览 • ' +
-                '                        <span>发布于' + item.timeCreate +'</span>' +
+                '                        <span>发布于' + item.timeCreate + '</span>' +
                 '                    </span>' +
                 '                </div>' +
                 '            </div>');
@@ -59,8 +58,8 @@ var App = function () {
         })
     }
 
-    var setPage = function(page) {
-        var req = {
+    const setPage = (page) => {
+        const req = {
             "page": page,
             "size": 15,
             "tag": $("#tagParam").val(),
@@ -72,10 +71,10 @@ var App = function () {
             type: "GET",
             url: "/getQuestionList",
             data: req,
-            beforeSend: function () {
+            beforeSend: () => {
                 loadingIndex = layer.msg('加载列表中', {icon: 16});
             },
-            success: function (resp) {
+            success: (resp) => {
                 layer.close(loadingIndex);
                 if (resp.code == 200) {
                     loadQuestionList(resp);
@@ -90,8 +89,8 @@ var App = function () {
     }
 
     //构建分页导航
-    var buildPageNav = function(resp) {
-        var page = resp.data;
+    const buildPageNav = (resp) => {
+        const page = resp.data;
         //设置当前页
         currentpage = page.pageNum;
         //设置末页
@@ -100,40 +99,40 @@ var App = function () {
         $(".pagination").empty();
         $('.page-info-area').append("当前第" + page.pageNum + "页,共" + page.pages + "页,共" + page.total + "条记录")
         //分页导航
-        var nav = $(".pagination");
-        var firstLi = $("<li></li>").append($("<a>首页</a>").attr("href", "#"));
-        var prli = $("<li></li>").append($("<a  aria-label='Previous'><span aria-hidden='true'>&laquo;</span></a>").attr("href", "#"));
+        const nav = $(".pagination");
+        const firstLi = $("<li></li>").append($("<a>首页</a>").attr("href", "#"));
+        const prli = $("<li></li>").append($("<a  aria-label='Previous'><span aria-hidden='true'>&laquo;</span></a>").attr("href", "#"));
         //首页
-        firstLi.click(function () {
+        firstLi.click(() => {
             setPage(1);
         });
         //上一页
-        prli.click(function () {
-            var target = page.pageNum - 1;
+        prli.click(() => {
+            let target = page.pageNum - 1;
             target = target == 0 ? 1 : target;
             setPage(target);
         })
-        var lastLi = $("<li></li>").append($("<a>末页</a>").attr("href", "#"));
-        var nextli = $("<li></li>").append($("<a  aria-label='Next'><span aria-hidden='true'>&raquo;</span></a>").attr("href", "#"));
+        const lastLi = $("<li></li>").append($("<a>末页</a>").attr("href", "#"));
+        const nextli = $("<li></li>").append($("<a  aria-label='Next'><span aria-hidden='true'>&raquo;</span></a>").attr("href", "#"));
         //末页
-        lastLi.click(function () {
+        lastLi.click(() => {
             //alert("转到:"+page.pages)
             setPage(page.pageSize);
         })
         //下一页
-        nextli.click(function () {
-            var target = page.pageNum + 1;
+        nextli.click(() => {
+            let target = page.pageNum + 1;
             target = target < page.pageSize ? target : page.pageSize;
             setPage(target);
         })
         nav.append(prli);
-        $.each(page.navigatepageNums, function (index, item) {
+        $.each(page.navigatepageNums, (index, item) => {
             var li = $("<li></li>").append($("<a>" + item + "</a>").attr("href", "#"));
             if (page.pageNum == item) {
                 li.addClass("active");
             }
             //点击翻页
-            li.click(function () {
+            li.click(() => {
                 $(".pagination>li").removeClass("active");
                 $(this).addClass("active");
                 setPage(item);
@@ -144,22 +143,22 @@ var App = function () {
         nav.append(nextli);
     }
 
-    var initParams =function () {
+    const initParams = () => {
         $("#primary-tab li a").click(function () {
             $("#orderParam").val(this.id);
-            $("#primary-tab li a").removeClass("nav-tabs-active");
-            $(this).toggleClass("nav-tabs-active");
+            $("#primary-tab li a").removeClass("nav-tabs-item-active");
+            $(this).addClass("nav-tabs-item-active");
             setPage(1);
         });
 
-        $("#btn-register").bind("click",function () {
+        $("#btn-register").bind("click", () => {
             $("#login-page").hide();
-            $("#register_page").show();
+            $("#register-page").show();
         });
 
         function loginPopup() {
             $("#login-modal").modal("show")
-            $("#register_page").hide();
+            $("#register-page").hide();
             $("#login-page").show();
         }
         $(".globalLoginBtn").on("click", loginPopup),function() {
@@ -178,7 +177,7 @@ var App = function () {
         } ();
     }
 
-    var register = function () {
+    const register = () => {
         let data = {
             "username": $("#id-register-username").val(),
             "password": $("#id-register-password").val(),
@@ -190,22 +189,25 @@ var App = function () {
             method: "POST",
             data: JSON.stringify(data),
             contentType: "application/json",
-            success: function (resp) {
-                if ( resp.code == 200 ) {
-                    $("#register-form-tips").val(resp.message + ', 正在跳转,请重新登录');
-                    $("#register-form-tips").show();
-                    setTimeout(function () {
+            success: (resp) => {
+                if (resp.code == 200) {
+                    $("#register-form-content").val(resp.message + ', 正在跳转,请重新登录');
+                    $("#register-form-tips").show(1000);
+                    setTimeout(() => {
                         window.location.href = "/index";
-                    },3000);
+                    }, 3000);
                 } else {
-                    $("#register-form-tips").html(resp.message);
-                    $("#register-form-tips").show();
+                    $("#register-form-content").html(resp.message);
+                    $("#register-form-tips").show(1000);
+                    setTimeout(() => {
+                        $("#register-form-tips").hide(1000);
+                    }, 3000)
                 }
             }
         });
     }
 
-    var login = function() {
+    const login = () => {
         var data = {
             "username": $("#id-account-username").val(),
             "password": $("#id-account-password").val()
@@ -215,16 +217,16 @@ var App = function () {
             method: "POST",
             type: "application/json",
             data: data,
-            success: function (resq) {
-                $("#login-form-tips").html(resq.message);
-                $("#login-form-tips").show();
-                setTimeout(function () {
-                    if( resq.code == 200) {
+            success: (resp) => {
+                $("#login-form-content").html(resp.message);
+                $("#login-form-tips").show(1000);
+                setTimeout(() => {
+                    if (resp.code == 200) {
                         window.location.href = "/index";
                     } else {
-                        $("#login-form-tips").html("");
+                        $("#login-form-tips").hide(1000);
                     }
-                },1000);
+                }, 2000);
             }
         });
     }

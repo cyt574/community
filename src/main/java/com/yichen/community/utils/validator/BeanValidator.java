@@ -1,4 +1,4 @@
-package com.yichen.community.validator;
+package com.yichen.community.utils.validator;
 
 
 import org.springframework.beans.factory.annotation.Autowired;

@@ -5,7 +5,6 @@ import com.yichen.community.dto.QuestionDTO;
 import com.yichen.community.dto.ResultDTO;
 import com.yichen.community.dto.UserProfileDTO;
 import com.yichen.community.exception.CustomizeErrorCode;
-import com.yichen.community.mapper.UserMapper;
 import com.yichen.community.model.Notification;
 import com.yichen.community.model.User;
 import com.yichen.community.model.UserDetail;
@@ -14,17 +13,15 @@ import com.yichen.community.service.QuestionService;
 import com.yichen.community.service.UserDetailService;
 import com.yichen.community.service.UserService;
 import com.yichen.community.utils.EmailSendUtils;
-import com.yichen.community.validator.BeanValidator;
+import com.yichen.community.utils.validator.BeanValidator;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CachePut;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.validation.Validator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,9 +29,6 @@ import java.util.Random;
 
 @Controller
 public class ProfileController {
-
-    @Autowired
-    UserMapper userMapper;
 
     @Autowired
     UserService userService;
@@ -153,7 +147,7 @@ public class ProfileController {
     public String profileDetail(@SessionAttribute("user") User sessionUser, Model model) {
         UserDetail userDetail = userDetailService.getUserDetail(sessionUser.getId());
         model.addAttribute("profileDetail", userDetail);
-        return "profile_detail";
+        return "profile-detail";
     }
 
     @ResponseBody

@@ -6,7 +6,7 @@
 - Maven
 - MySQL
 
-## 部署
+## 部署 CentOS 5.7
 - yum update
 - yum install git
 - mkdir App; cd App
@@ -53,23 +53,17 @@
 [lombok](https://www.projectlombok.org/features/all)
 
 ## 脚本
-```sql
-create table user
-(
-	id integer auto_increment,
-	account_id varchar(100),
-	name varchar(50),
-	token char(36),
-	gmt_create bigint,
-	gmt_modified bigint,
-	constraint user_pk
-		primary key (id)
-);
+```sql DDL
+classpath:db.migration/*
 ```
 
 ```bash
+# database version control
 mvn flyway:migrate
+# mybatis code generator
 mvn -Dmybatis.generator.overwrite=true mybatis-generator:generate   
+# third part jar ==> maven repository
+mvn install:install-file -DgroupId=imsdriver（jar包的groupId） -DartifactId=imsdriver（jar包的artifactId） -Dversion=1.0（jar的版本号） -Dpackaging=jar -Dfile=D:\jar\imsdriver.jar（jar包的具体路径）
 ```
 
  

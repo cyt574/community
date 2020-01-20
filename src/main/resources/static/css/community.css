@@ -79,13 +79,16 @@ h3 span {
     border-bottom: 2px solid #155faa;
 }
 
-.select-nav-title span {
-    margin: 5px;
+.nav-title {
+    border-bottom: solid 1px #e6e6e6;
 }
 
 .nav-title li {
     float: right;
-    margin: 1px;
+}
+
+.nav-title li a:hover {
+    border-bottom: 2px solid #155faa;
 }
 
 .question-title {
@@ -176,7 +179,7 @@ h3 span {
 }
 
 .media-body {
-    padding-bottom: 15px;
+    padding-bottom: 10px;
 }
 
 .text-desc {
@@ -290,6 +293,7 @@ h3 span {
     background: white;
     padding: 15px;
     min-height: 480px;
+    border-right: 1px solid #eee;
 }
 
 .profile-detail a {

@@ -34,7 +34,7 @@ const App = function () {
         $("#question-wrapper").empty();
         var questionList = resp.data.list;
         $.each(questionList, (index, item) => {
-            var question = $('<div class="media" style="margin-left: 20px">' +
+            var question = $('<div class="media">' +
                 '                <div class="media-left">' +
                 '                    <a href="#">' +
                 '                        <img class="media-object img-rounded" src="' + item.user.avatarUrl + '" alt="....">' +
@@ -44,12 +44,9 @@ const App = function () {
                 '                    <h4 class="media-heading" style="color: #2860AC">' +
                 '                        <a href="/question/' + item.id + '">' + item.title + '</a>' +
                 '                    </h4>' +
-                '                    <span class="text-desc">' +
-                '                        <span >' + item.commentCount +
-                '                        </span> 个评论 •' +
-                '                        <span>' + item.viewCount +
-                '                        </span> 次浏览 • ' +
-                '                        <span>发布于' + item.timeCreate + '</span>' +
+                '                    <span class="text-desc"> ' + item.user.name + ' 发布了文章 • ' + item.commentCount +
+                '个评论 • ' + item.viewCount +
+                '次浏览 • ' + item.timeCreate +
                 '                    </span>' +
                 '                </div>' +
                 '            </div>');
@@ -161,10 +158,11 @@ const App = function () {
             $("#register-page").hide();
             $("#login-page").show();
         }
-        $(".globalLoginBtn").on("click", loginPopup),function() {
+
+        $(".globalLoginBtn").on("click", loginPopup), function () {
             var e = [];
             $(".modal").on("show.bs.modal",
-                function() {
+                function () {
                     for (var s = 0; e.length > s; s++) e[s] && (e[s].modal("hide"), e[s] = null);
                     e.push($(this));
                     var o = $(this),
@@ -174,7 +172,7 @@ const App = function () {
                         t.children("div").html(a),
                         o.html(t)
                 })
-        } ();
+        }();
     }
 
     const register = () => {

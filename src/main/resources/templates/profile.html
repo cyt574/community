@@ -42,10 +42,10 @@
 
             <div class="profile-follow">
                 <div th:if="${session.user.id != userProfile.id}">
-                    <a class="number-board-item" type="button"  id="follow-control" onmouseover="followHover()" onmouseout="followOut()"
+                    <button class="number-board-item btn" type="button"  id="follow-control" onmouseover="followOver()" onmouseout="followOut()"
                        onclick="handleFollowControl()" th:text="${followStatus}">
-                    </a>
-                    <a class="number-board-item number-board-last" type="button" >发私信</a>
+                    </button>
+                    <button class="number-board-item btn btn-default" type="button" >发私信</button>
                 </div>
                 <div th:if="${session.user.id == userProfile.id}" class="number-board">
                     <a class="number-board-item" type="button" href="/profile/detail">
@@ -61,7 +61,7 @@
                 <a href="#" onclick="setPersonalQuestion()" id="question-trigger" class="list-group-item">我的问题
                     <span class="badge" th:text="${userProfile.question}"></span>
                 </a>
-                <a href="#" onclick="setPersonalReply()" id="reply_trigger" class="list-group-item"
+                <a href="#" onclick="setPersonalReply()" id="reply-trigger" class="list-group-item"
                    th:if="${session.user.id == userProfile.id}">最新回复
                     <span class="badge" th:text="${session.unreadCount}">0</span>
                 </a>
@@ -86,12 +86,12 @@
 <script>
     $(function () {
         if ($("#follow-status").val() == "关注他") {
-            $("#follow-control").addClass("active")
+            $("#follow-control").addClass("btn-info")
         } else {
-            $("#follow-control").removeClass("active")
+            $("#follow-control").addClass("btn-default")
         }
 
-        var model = $("#param").val();
+        const model = $("#param").val();
         if (model == 'reply') {
             setPersonalReply()
         } else if (model == 'question') {
@@ -106,7 +106,7 @@
     });
 
     function handleFollowControl() {
-        var url = $("#follow-status").val() == "关注他" ? "/profile/follow?id="
+        const url = $("#follow-status").val() == "关注他" ? "/profile/follow?id="
             + $("#profile-id").val() + "&fid=" + $("#user-id").val() : "/profile/unfollow?id="
             + $("#profile-id").val() + "&fid=" + $("#user-id").val();
         $.ajax({
@@ -114,31 +114,33 @@
             method: "GET",
             success: function (resp) {
                 if (resp.code == 200) {
-                    // window.location.reload();
                     $("#follow-status").val(resp.data)
+                    $("#follow-control").removeClass("btn-info btn-default")
                     if (resp.data == "关注他") {
-                        $("#follow-control").addClass("btn btn-default")
+                        $("#follow-control").addClass("btn-info")
                     } else {
-                        $("#follow-control").addClass("btn btn-primary")
+                        $("#follow-control").addClass("btn-default")
                     }
                 } else {
                     // swal(resp.data);
                 }
+                window.location.reload();
             }
         })
     }
 
     function followOut() {
-        if ($("#follow-status").val() === "关注他") {
-            $("#follow-control").text("关注他");
+        if ($("#follow-status").val() === "已关注") {
+            $("#follow-control").text("已关注");
         } else {
-            $("#follow-control").text("取关他");
+            $("#follow-control").text("关注他");
         }
     }
 
-    function followHover() {
+    function followOver() {
         if ($("#follow-status").val() === "已关注") {
-            $("#follow-control").text("取关他");
+            $("#follow-control").addClass("btn-default")
+            $("#follow-control").text("取消关注");
         } else {
             $("#follow-control").text("关注他");
         }
@@ -194,7 +196,7 @@
         var url = "/profile/replies/" + $("#profile-id").val();
         emptyWrapper();
         $(".list-group-item").removeClass("active");
-        $("#reply_trigger").addClass("active");
+        $("#reply-trigger").addClass("active");
         $.ajax({
             type: "GET",
             url: url,
@@ -203,7 +205,7 @@
             },
             success: function (resp) {
                 layer.close(loadingIndex);
-                load_reply_list(resp);
+                loadReplyList(resp);
                 buildPageNav(resp);
             }
         });
@@ -222,13 +224,13 @@
             },
             success: function (resp) {
                 layer.close(loadingIndex);
-                load_question_list(resp);
+                loadQuestionList(resp);
                 buildPageNav(resp);
             }
         });
     }
 
-    function load_question_list(resp) {
+    function loadQuestionList(resp) {
         emptyWrapper();
         var questionList = resp.data.itemList.list;
         $.each(questionList, function (index, item) {
@@ -256,7 +258,7 @@
         })
     }
 
-    function load_reply_list(resp) {
+    function loadReplyList(resp) {
         var replyList = resp.data.itemList.list;
         emptyWrapper();
         $.each(replyList, function (index, item) {
@@ -372,7 +374,7 @@
             success: function (resp) {
                 layer.close(loadingIndex);
                 if (resp.code == 200) {
-                    load_question_list(resp);
+                    loadQuestionList(resp);
                     buildPageNav(resp);
                     $("html,body").animate({scrollTop: 0}, 1);//回到顶端
                 } else {

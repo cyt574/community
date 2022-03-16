@@ -10,6 +10,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class UserProfileDTO extends User {
 
     @Size(min = 6, max = 22)
@@ -34,4 +35,6 @@ public class UserProfileDTO extends User {
     private String industry;
     private String profession;
     private String signature;
+
+
 }

@@ -1,4 +1,4 @@
-package com.yichen.community.cache;
+package com.yichen.community.utils.cache;
 
 import com.yichen.community.dto.TagDTO;
 import org.apache.commons.lang3.StringUtils;

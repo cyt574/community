@@ -1,16 +1,14 @@
 package com.yichen.community.controller;
 
-import com.yichen.community.cache.TagCache;
+import com.yichen.community.utils.cache.TagCache;
 import com.yichen.community.dto.QuestionDTO;
 import com.yichen.community.dto.ResultDTO;
 import com.yichen.community.exception.CustomizeErrorCode;
-import com.yichen.community.exception.CustomizeException;
 import com.yichen.community.mapper.QuestionMapper;
 import com.yichen.community.mapper.UserMapper;
 import com.yichen.community.model.Question;
 import com.yichen.community.model.User;
 import com.yichen.community.service.QuestionService;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,8 +16,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.Map;
 
 @Controller
 public class PublishController {

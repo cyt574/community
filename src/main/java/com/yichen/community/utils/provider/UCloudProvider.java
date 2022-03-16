@@ -12,6 +12,7 @@ import com.yichen.community.exception.CustomizeException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
 
@@ -51,7 +52,7 @@ public class UCloudProvider {
         }
         try {
             PutObjectResultBean response = UfileClient.object(BUCKET_AUTHORIZER, config)
-                    .putObject(fileStream, mimeType)
+                    .putObject(fileStream, fileStream.available(), mimeType)
                     .nameAs(generatedFileName)
                     .toBucket(bucketName)
                     .setOnProgressListener((bytesWritten, contentLength) -> {
@@ -73,6 +74,9 @@ public class UCloudProvider {
             throw new CustomizeException(CustomizeErrorCode.FILE_UPLOAD_FAIL);
         } catch (UfileServerException e) {
             throw new CustomizeException(CustomizeErrorCode.FILE_UPLOAD_FAIL);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        return generatedFileName;
     }
 }

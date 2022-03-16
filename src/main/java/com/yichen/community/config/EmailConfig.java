@@ -9,9 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 @Configuration
-public class CommonEmailConfig {
+public class EmailConfig {
 
     @Value("${email.host.name}")
     String hostName;
@@ -30,9 +31,6 @@ public class CommonEmailConfig {
 
     @Value("${email.SSLOnConnect}")
     boolean SSLOnConnect;
-
-    @Autowired
-    Email email;
 
     @Bean
     public DefaultAuthenticator defaultAuthenticator() {

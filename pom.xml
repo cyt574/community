@@ -16,7 +16,7 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <springboot.version>2.6.4</springboot.version>
+        <springboot.version>2.6.6</springboot.version>
         <mysql.version>8.0.28</mysql.version>
         <kaptcha.version>2.3.2</kaptcha.version>
         <okhttp3.version>4.9.3</okhttp3.version>

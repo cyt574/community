@@ -21,7 +21,7 @@
         <kaptcha.version>2.3.2</kaptcha.version>
         <okhttp3.version>4.9.3</okhttp3.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
-        <fastjson.version>1.2.79</fastjson.version>
+        <fastjson.version>1.2.83</fastjson.version>
         <pagehelper.version>1.4.1</pagehelper.version>
         <ufile-client-java.version>2.6.6</ufile-client-java.version>
         <just-auth.version>1.16.5</just-auth.version>

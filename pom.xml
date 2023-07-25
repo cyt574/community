@@ -158,7 +158,7 @@
         <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-web</artifactId>
-            <version>1.8.0</version>
+            <version>1.12.0</version>
         </dependency>
         <!--Email-->
         <dependency>
